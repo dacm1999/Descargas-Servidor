@@ -4,11 +4,39 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8f8c362d-1a02-4679-b959-2ee8a735e088" name="Changes" comment="" />
+    <list default="true" id="8f8c362d-1a02-4679-b959-2ee8a735e088" name="Changes" comment="Practica Cliente-Servidor">
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/flatlaf_3_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/jgoodies_common.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/jgoodies_forms.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/controlador/ControladorServidor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/gui/VistaCliente.form" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/gui/VistaCliente.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/gui/VistaServidor.form" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/gui/VistaServidor.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ownResources/flatlaf-3.0.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ownResources/jgoodies-common-1.8.1.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/ownResources/jgoodies-forms-1.9.0.jar" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tasks/Transferencia.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Practica Cliente-Servidor - RECUPERACION.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Practica Cliente-Servidor - RECUPERACION.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2N3Cd8N8GTBy3aC9eyqiap5dvCj" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -18,18 +46,70 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Downloaded.Files.Path.Enabled": "true",
+    "Repository.Attach.Annotations": "false",
+    "Repository.Attach.JavaDocs": "false",
+    "Repository.Attach.Sources": "false",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "UI_DESIGNER_EDITOR_MODE.PaletteManager.SHOW": "true",
+    "UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH": "279",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/danie/Documents/PROGRAMACIÓN DE SERVICIOS Y PROCESOS/WORKSPACE - PSP/Practica Cliente-Servidor - RECUPERACION",
+    "last_opened_file_path": "C:/Users/danie/Documents/PROGRAMACIÓN DE SERVICIOS Y PROCESOS/WORKSPACE - PSP/Practica Cliente-Servidor - RECUPERACION/src/ownResources/flatlaf-3.0.jar",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
-    "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.lookFeel",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\danie\Documents\PROGRAMACIÓN DE SERVICIOS Y PROCESOS\WORKSPACE - PSP\Practica Cliente-Servidor - RECUPERACION\src\ownResources" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="tasks" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Application.VistaCliente">
+    <configuration name="VistaCliente" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="gui.VistaCliente" />
+      <module name="Practica Cliente-Servidor - RECUPERACION" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="gui.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="VistaServidor" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="gui.VistaServidor" />
+      <module name="Practica Cliente-Servidor - RECUPERACION" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="gui.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.VistaCliente" />
+        <item itemvalue="Application.VistaServidor" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -38,8 +118,16 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1678883463448</updated>
-      <workItem from="1678883464375" duration="796000" />
+      <workItem from="1678883464375" duration="5673000" />
     </task>
+    <task id="LOCAL-00001" summary="PruebaGIT">
+      <created>1678884371052</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1678884371052</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -55,5 +143,10 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="PruebaGIT" />
+    <MESSAGE value="Practica Cliente-Servidor" />
+    <option name="LAST_COMMIT_MESSAGE" value="Practica Cliente-Servidor" />
   </component>
 </project>
