@@ -49,6 +49,8 @@
           <component id="632b9" class="javax.swing.JLabel">
             <constraints/>
             <properties>
+              <horizontalAlignment value="2"/>
+              <horizontalTextPosition value="2"/>
               <text value="ID Cliente: "/>
             </properties>
           </component>
@@ -56,6 +58,7 @@
             <constraints/>
             <properties>
               <columns value="17"/>
+              <editable value="false"/>
             </properties>
           </component>
         </children>
@@ -102,7 +105,7 @@
           <stringPainted value="true"/>
         </properties>
       </component>
-      <component id="85e84" class="javax.swing.JLabel">
+      <component id="85e84" class="javax.swing.JLabel" binding="lblEstado">
         <constraints>
           <grid row="10" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
           <forms/>

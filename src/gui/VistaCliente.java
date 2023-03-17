@@ -12,12 +12,13 @@ public class VistaCliente {
     public JButton btnConectar;
     public JButton btnRefrescar;
     public JButton btnSubirFichero;
+    public JTextField txfIp;
+    public JLabel lblEstado;
     public JList listaGUI;
     private JPanel pnlPrincipal;
-    private JTextField txfIp;
     private JTextField txfCliente;
     private JLabel lbl1;
-    private JProgressBar barraProgreso;
+    public JProgressBar barraProgreso;
 
 
     private VistaCliente() {
@@ -26,7 +27,6 @@ public class VistaCliente {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(550, 450);
         frame.setLocationRelativeTo(null);
-        //listaGUI.setModel(modelo);
         frame.setVisible(true);
     }
 

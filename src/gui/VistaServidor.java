@@ -10,10 +10,10 @@ import java.util.logging.Logger;
 
 public class VistaServidor {
     public JButton btnIniciar;
+    public JTextArea txtClientes;
+    public JList lista;
     private JPanel pnlPrincipal;
     private JLabel lbl1;
-    private JTextArea txtCliente;
-    private JList lista;
     private JLabel lbl2;
     private JScrollPane scrollpnl;
 
