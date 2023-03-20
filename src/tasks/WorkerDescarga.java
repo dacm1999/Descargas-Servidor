@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
 import static javax.xml.ws.Endpoint.publish;
 
 public class WorkerDescarga extends SwingWorker<Void,Integer> {
@@ -31,26 +32,29 @@ public class WorkerDescarga extends SwingWorker<Void,Integer> {
         this.file = file;
     }
 
-    private void  metodo() throws IOException, ClassNotFoundException {
-
-
+    @Override
+    protected void process(List<Integer> valores) {
+        vistaCliente.barraProgreso.setValue((Integer) valores.get(valores.size() - 1));
 
     }
-
 
     @Override
     protected Void doInBackground() throws Exception {
 
         int selec = 2;
         salida.writeInt(selec);
-        salida.writeObject(ficheroSeleccionado);
+        salida.writeUTF(ficheroSeleccionado);
         salida.flush();
 
-        vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
-        vistaCliente.lblEstado.setForeground(Color.black);
+        try {
+            sleep(1000);
+            vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
+            vistaCliente.lblEstado.setForeground(Color.black);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
-
-        fileSize = (long) entrada.readObject();
+        fileSize = (long) entrada.readLong();
         System.out.println("Tamaño del fichero" + fileSize);
 
         FileOutputStream escritorFichero = new FileOutputStream(file);
@@ -62,7 +66,6 @@ public class WorkerDescarga extends SwingWorker<Void,Integer> {
         while(totalLeido < fileSize && (bytesLeidos = entrada.read(buffer)) > 0 ){
             escritorFichero.write(buffer, 0, bytesLeidos);
             totalLeido += (long)bytesLeidos;
-
             int progreso =(int) (totalLeido*100/fileSize);
             publish(progreso);
         }

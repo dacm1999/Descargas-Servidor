@@ -18,14 +18,14 @@ import java.util.List;
 public class ControladorCliente implements ActionListener {
 
     public VistaCliente vistaCliente;
-    public ArrayList<Transferencia> listaDescargas;
+    public List<String> listaDescargas;
     public Transferencia t;
     private Socket cliente;
     private ObjectOutputStream salida;
     private ObjectInputStream entrada;
     private DefaultListModel modelo;
     private boolean estado;
-    private String nombre;
+    private String seleccion;
     private File fichero;
 
 
@@ -79,11 +79,9 @@ public class ControladorCliente implements ActionListener {
                             } catch (ClassNotFoundException ex) {
                                 throw new RuntimeException(ex);
                             }
-
-
-
                         }
                     });
+                    hilo.start();
                 break;
             }
             case "Subir": {
@@ -94,13 +92,20 @@ public class ControladorCliente implements ActionListener {
     }
 
     private void descargar() {
-        WorkerDescarga descarga = new WorkerDescarga(entrada,salida,vistaCliente,nombre,fichero);
-        descarga.execute();
+        if(vistaCliente.listaGUI.isSelectionEmpty()){
+            JOptionPane.showMessageDialog(null, "Seleccione un fichero.", "Error de descarga", JOptionPane.ERROR_MESSAGE);
+        }else{
+            seleccion = (String) vistaCliente.listaGUI.getSelectedValue();
+            WorkerDescarga descarga = new WorkerDescarga(entrada,salida,vistaCliente,seleccion,fichero);
+            descarga.execute();
+            System.out.println("Fichero seleccionado");
+
+        }
     }
 
     private void subirFichero() {
         JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Selecciona el archivo a enviar");
+        fileChooser.setDialogTitle("Selecciona el archivo a subir");
         int seleccion = fileChooser.showOpenDialog(null);
         if (seleccion == JFileChooser.APPROVE_OPTION) {
             fichero = fileChooser.getSelectedFile();
@@ -110,19 +115,21 @@ public class ControladorCliente implements ActionListener {
     }
 
     private void listaFicheros(List<String> lista) {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                // Se borra la lista de descargas en la vista.
-                modelo.clear();
+        SwingUtilities.invokeLater(() -> {
+            System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread());
 
-                // Se itera a través de la lista de descargas.
-                Iterator iterator = lista.iterator();
-                while (iterator.hasNext()) {
-                    // Se obtiene la próxima descarga.
-                    String descarga = (String) iterator.next();
-                    // Se agrega la descarga a la lista en la vista.
-                    modelo.addElement(descarga);
+            try {
+                DefaultListModel<String> modelo = new DefaultListModel<>();
+                for (String fichero : lista) {
+                    modelo.addElement(fichero);
                 }
+                vistaCliente.listaGUI.setModel(modelo);
+            } catch (NullPointerException ex) {
+                System.out.println("ERROR: " + ex.getMessage());
+                throw new RuntimeException(ex);
+            } finally {
+                System.out.println("Ficheros subidos: ");
+                lista.forEach(System.out::println);
             }
         });
     }

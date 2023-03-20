@@ -5,15 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8f8c362d-1a02-4679-b959-2ee8a735e088" name="Changes" comment="Practica Cliente-Servidor">
-      <change afterPath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controlador/ControladorServidor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controlador/ControladorServidor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gui/VistaServidor.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/VistaServidor.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gui/VistaServidor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/VistaServidor.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tasks/HiloCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/HiloCliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/NoSIRVE.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/WorkerEnvio.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/WorkerSubida.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -112,7 +107,7 @@
       <option name="presentableId" value="Default" />
       <updated>1678883463448</updated>
       <workItem from="1678883464375" duration="10949000" />
-      <workItem from="1678981853850" duration="37745000" />
+      <workItem from="1678981853850" duration="40684000" />
     </task>
     <task id="LOCAL-00001" summary="PruebaGIT">
       <created>1678884371052</created>
@@ -135,7 +130,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679085341765</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Practica Cliente-Servidor">
+      <created>1679327538219</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1679327538219</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

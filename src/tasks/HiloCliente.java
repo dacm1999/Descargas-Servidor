@@ -159,32 +159,29 @@ public class HiloCliente extends Thread {
 
     private void descargas() {
         try {
-
-            String nombre = (String) this.entrada.readObject();
+            String nombre = (String) this.entrada.readUTF();
             File fichero = new File(nombre);
             long fileSize = fichero.length();
             System.out.println("Nombre del fichero " + nombre + " tamaño del fichero " + fichero);
             long totalWrited = 0L;
             this.salida.writeLong(fileSize);
             this.salida.flush();
-            FileInputStream lectorFichero = new FileInputStream(fichero);
+            FileInputStream fileInputStream = new FileInputStream(fichero);
             byte[] buffer = new byte[1024];
 
             int bytesLeidos;
-            while (fileSize > 0L && (bytesLeidos = lectorFichero.read(buffer)) > 0) {
-                this.salida.write(buffer, "".length(), bytesLeidos);
+            while (fileSize > 0L && (bytesLeidos = fileInputStream.read(buffer)) > 0) {
+                this.salida.write(buffer, 0, bytesLeidos);
                 this.salida.flush();
                 totalWrited += (long) bytesLeidos;
             }
 
-            lectorFichero.close();
+            fileInputStream.close();
             System.out.println("Nombre del fichero " + nombre + " BYTES ESCRTIOS " + totalWrited);
 
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            System.out.println("Archivo no encontrado" + e.getClass());
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
@@ -193,21 +190,24 @@ public class HiloCliente extends Thread {
      * Muestra los ficheros en la GUI
      */
     private void refrescarDescargas() {
-        SwingUtilities.invokeLater(() -> {
-            System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread());
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread());
 
-            try {
-                DefaultListModel<String> modelo = new DefaultListModel<>();
-                for (String descarga : listaDescargas) {
-                    modelo.addElement(descarga);
+                try {
+                    DefaultListModel<String> modelo = new DefaultListModel<>();
+                    for (String descarga : listaDescargas) {
+                        modelo.addElement(descarga);
+                    }
+                    vista.listaGUI.setModel(modelo);
+                } catch (NullPointerException ex) {
+                    System.out.println("ERROR: " + ex.getMessage());
+                    throw new RuntimeException(ex);
+                } finally {
+                    System.out.println("Ficheros subidos: ");
+                    listaDescargas.forEach(System.out::println);
                 }
-                vista.listaGUI.setModel(modelo);
-            } catch (NullPointerException ex) {
-                System.out.println("ERROR: " + ex.getMessage());
-                throw new RuntimeException(ex);
-            } finally {
-                System.out.println("Ficheros subidos: ");
-                listaDescargas.forEach(System.out::println);
             }
         });
     }
