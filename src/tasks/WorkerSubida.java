@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
-public class WorkerEnvio  extends SwingWorker<Void, Integer> {
+public class WorkerSubida extends SwingWorker<Void, Integer> {
 
     private ObjectOutputStream salida;
     private FileInputStream entradaFichero;
@@ -18,7 +18,7 @@ public class WorkerEnvio  extends SwingWorker<Void, Integer> {
     private File fichero;
     private boolean transfiriendo;
 
-    public WorkerEnvio(ObjectOutputStream salida, VistaCliente vista, File fichero) {
+    public WorkerSubida(ObjectOutputStream salida, VistaCliente vista, File fichero) {
         this.salida = salida;
         this.vista = vista;
         this.fichero = fichero;
@@ -28,17 +28,16 @@ public class WorkerEnvio  extends SwingWorker<Void, Integer> {
     @Override
     protected Void doInBackground() throws Exception {
         //envio el boton que he pulsado
-        String seleccion = "subir";
-        salida.writeUTF(seleccion);
+        int seleccion = 3;
+        salida.writeInt(seleccion);
 
 
         System.out.println("-------------CLASE WORKER ENVIO-------------");
-        tamanoFichero = fichero.length();
-        System.out.println("Tamaño del fichero a enviar " + tamanoFichero);
-
         //Envio el fichero
+        tamanoFichero = fichero.length();
         salida.writeLong(tamanoFichero);
-
+        salida.writeObject(fichero.getName());
+        System.out.println("Tamaño del fichero a enviar " + tamanoFichero + " NOMBRE " + fichero.getName());
         salida.flush();
 
 //        System.out.println("NOMBRE DEL FICHERO " + fichero.getName() + " tamaño del fichero " + tamanoFichero);
@@ -50,18 +49,16 @@ public class WorkerEnvio  extends SwingWorker<Void, Integer> {
         int bytesLeidos;
         long totalBytesLeidos = 0L;
 
-
-
         while ((bytesLeidos = entradaFichero.read(buffer)) > 0) {
             salida.write(buffer, 0, bytesLeidos);
             salida.flush();
             totalBytesLeidos += (long)bytesLeidos;
             int porcentaje = (int)(totalBytesLeidos / tamanoFichero * 100.0D);
 
-            Integer[] var = new Integer[1];
-            var[0] = porcentaje;
-            publish(var);
-//            publish(porcentaje);
+//            Integer[] var = new Integer[1];
+//            var[0] = porcentaje;
+//            publish(var);
+            publish(porcentaje);
         }
 
         System.out.println("NOMBRE DEL FICHERO: " + fichero.getName() + " -- tamaño del fichero: " + tamanoFichero);

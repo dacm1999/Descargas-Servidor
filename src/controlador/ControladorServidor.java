@@ -7,7 +7,6 @@ import tasks.Transferencia;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -22,7 +21,7 @@ public class ControladorServidor implements ActionListener {
     private boolean estado;
     private Transferencia transferencia;
     public DefaultListModel modelo;
-    private List listaDescargas;
+    private List <String> listaDescargas;
 
     public ControladorServidor(VistaServidor vistaServidor) {
         this.vistaServidor = vistaServidor;
@@ -31,7 +30,8 @@ public class ControladorServidor implements ActionListener {
         listaDescargas = new ArrayList();
 
         modelo = new DefaultListModel();
-        vistaServidor.lista.setModel(modelo);
+        vistaServidor.listaGUI.setModel(modelo);
+//        listaDescargas = vistaServidor.listaGUI.getSelectedValuesList();
     }
 
 
@@ -56,6 +56,7 @@ public class ControladorServidor implements ActionListener {
         try {
 
             serverSocket = new ServerSocket(12345);
+//            listaDescargas = (List<String>) vistaServidor.lista;
             vistaServidor.btnIniciar.setText("Servidor Iniciado");
             System.out.println("SERVIDOR INICIADO");
             estado = true;
@@ -69,7 +70,9 @@ public class ControladorServidor implements ActionListener {
                                 @Override
                                 public void run() {
                                     vistaServidor.txtClientes.append(cliente.getInetAddress().getHostAddress() + " conectado\n");
+                                    System.out.println("Cliente conectado: " + cliente.getInetAddress());
                                     HiloCliente cliente1 = new HiloCliente(cliente,listaDescargas,vistaServidor);
+
                                     cliente1.start();
                                 }
                             });

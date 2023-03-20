@@ -3,12 +3,13 @@ package tasks;
 import controlador.ControladorServidor;
 import gui.VistaServidor;
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class HiloCliente extends Thread{
+public class HiloCliente extends Thread {
 
 
     private Socket socketCliente;
@@ -17,6 +18,7 @@ public class HiloCliente extends Thread{
 
     private ObjectOutputStream salida;
     private ObjectInputStream entrada;
+    private ControladorServidor controladorServidor;
 
     public HiloCliente(Socket socketCliente, List<String> listaDescargas, VistaServidor vista) {
         this.socketCliente = socketCliente;
@@ -30,54 +32,43 @@ public class HiloCliente extends Thread{
             this.salida = new ObjectOutputStream(this.socketCliente.getOutputStream());
             this.entrada = new ObjectInputStream(this.socketCliente.getInputStream());
 
-
-
             // Agrega el nombre del cliente a la lista de clientes y actualiza la vista
             String ip = String.valueOf(this.socketCliente.getInetAddress());
-            refrescarClientesEDT();
 
             // Maneja las solicitudes del cliente
             opciones();
+            refrescarDescargas();
 
         } catch (IOException e) {
             System.err.println("Error en la comunicación con el cliente: " + e.getMessage());
         } finally {
-            this.refrescarClientesEDT();
-            // Cierra los flujos y el socket del cliente
-            try {
-                if (this.entrada != null) {
-                    this.entrada.close();
-                }
-                if (this.salida != null) {
-                    this.salida.close();
-                }
-                if (this.socketCliente != null) {
-                    this.socketCliente.close();
-                }
-
-            } catch (IOException e) {
-                System.err.println("Error al cerrar los flujos y el socket del cliente: " + e.getMessage());
-            }
+            refrescarDescargas();
         }
-        refrescarClientesEDT();
     }
 
     private void opciones() {
-        while(true){
+        while (true) {
             try {
-                String seleccion = entrada.readUTF();
-
+                int seleccion = entrada.readInt();
+                System.out.println("opcion seleccionada " + seleccion);
                 switch (seleccion) {
-                    case  "subir": {
-                        listaObjetos();
+                    case 0: {
+                        System.out.println("Refrescar button " + " seleccion " + seleccion);
+                        enviarListaFicheros();
+                        break;
                     }
 
-                    case "descargar": {
-
+                    case 1: {
+                    }
+                    case 2: {
+                        System.out.println("Descargar button " + " seleccion" + seleccion);
+                        descargas();
+                        break;
                     }
 
-                    case "": {
-
+                    case 3: {
+                        ficheroSubido();
+                        refrescarDescargas();
                     }
                 }
             } catch (IOException e) {
@@ -86,68 +77,75 @@ public class HiloCliente extends Thread{
         }
     }
 
-    private void listaObjetos() {
+
+    private void enviarListaFicheros() {
         try {
             salida.writeObject(listaDescargas);
-            salida.flush();
+            salida.reset();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void ficheroSubido(){
+    private void ficheroSubido() {
 
         try {
-            long fileSize = this.entrada.readLong();
-            String nombre = (String)this.entrada.readObject();
-            if (fileSize > 0L) {
-                int i = 0;
-                String nombreTemporal = nombre;
+            long tamanoFichero = this.entrada.readLong();
+            String nombreFichero = (String) this.entrada.readObject();
+            System.out.println("Nombre del fichero " + nombreFichero + "Tamaño del fichero a recibir: " + tamanoFichero);
 
-                FileOutputStream escritorFichero = new FileOutputStream(nombreTemporal);
-                long totalEscrito = 0L;
+            if (tamanoFichero > 0L) {
+                int i = 1;
+//                String nombreTemporal = nombreFichero;
+//                while (listaDescargas.contains(nombreTemporal)) {
+//                    nombreTemporal = i + "_" + nombreFichero;
+//                    listaDescargas.add(nombreTemporal);
+//                    ++i;
+//                }
+
+                System.out.println("Subiendo archivo: " + nombreFichero + ", tamaño: " + tamanoFichero + getClass());
+                FileOutputStream ficheroSalida = new FileOutputStream(nombreFichero);
+                long totalWrited = 0L;
                 byte[] buffer = new byte[1024];
                 int bytesLeidos;
-                while (fileSize > totalEscrito && (bytesLeidos = this.entrada.read(buffer)) > 0) {
-                    escritorFichero.write(buffer, "".length(), bytesLeidos);
-                    totalEscrito += bytesLeidos;
+
+                while (tamanoFichero > totalWrited && (bytesLeidos = entrada.read(buffer)) > 0) {
+                    ficheroSalida.write(buffer, 0, bytesLeidos);
+                    totalWrited += (long) bytesLeidos;
                 }
-                escritorFichero.close();
-                listaDescargas.add(nombreTemporal);
-            }
+                ficheroSalida.close();
+                listaDescargas.add(nombreFichero);
 
+                for (String nombre : listaDescargas) {
+                    System.out.println("ficheros agregados: " + nombre);
+//            long tamanoFichero = entrada.readLong();
+//            System.out.println("Tamaño del fichero a recibir: " + tamanoFichero);
+//
+//            String nombreFichero = (String) entrada.readObject();
+//            System.out.println("Nombre del fichero a recibir: " + nombreFichero);
+//
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+//            FileOutputStream ficheroSalida = new FileOutputStream(nombreFichero);
+//            byte[] buffer = new byte[1024];
+//            int bytesLeidos;
+//            long totalBytesLeidos = 0L;
+//
+//
+//            while ((bytesLeidos = entrada.read(buffer)) > 0) {
+//                ficheroSalida.write(buffer, 0, bytesLeidos);
+//                totalBytesLeidos += (long) bytesLeidos;
+//            }
+//            System.out.println("Total leido " + totalBytesLeidos + " del fichero " + nombreFichero);
+//
+//            ficheroSalida.close();
+//            listaDescargas.add(nombreFichero);
+//
+//            for(String nombre : listaDescargas){
+//                System.out.println("Nombre de ficheros: " + nombre);
+//            }
 
-    }
-
-    private void descarga()  {
-        try{
-            String nombre = (String)this.entrada.readObject();
-
-            File fichero = new File(nombre);
-            long fileSize = fichero.length();
-            long totalEscrito = 0L;
-            this.salida.writeLong(fileSize);
-            this.salida.flush();
-            FileInputStream lectorFichero = new FileInputStream(fichero);
-            byte[] buffer = new byte[429 + 853 - 264 + 6];
-
-            int bytesLeidos;
-            while(fileSize > 0L && (bytesLeidos = lectorFichero.read(buffer)) > 0) {
-                this.salida.write(buffer, "".length(), bytesLeidos);
-                this.salida.flush();
-                totalEscrito += (long)bytesLeidos;
-                "".length();
-                if (0 >= 1) {
-                    throw null;
                 }
             }
-            lectorFichero.close();
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -156,14 +154,63 @@ public class HiloCliente extends Thread{
             throw new RuntimeException(e);
         }
 
+
     }
 
-    private void refrescarClientesEDT() {
-        ControladorServidor control = null;
+    private void descargas() {
+        try {
 
-        control.modelo.clear();
-        for(String descarga : listaDescargas){
-//            control.modelo.addElement(descarga());
+            String nombre = (String) this.entrada.readObject();
+            File fichero = new File(nombre);
+            long fileSize = fichero.length();
+            System.out.println("Nombre del fichero " + nombre + " tamaño del fichero " + fichero);
+            long totalWrited = 0L;
+            this.salida.writeLong(fileSize);
+            this.salida.flush();
+            FileInputStream lectorFichero = new FileInputStream(fichero);
+            byte[] buffer = new byte[1024];
+
+            int bytesLeidos;
+            while (fileSize > 0L && (bytesLeidos = lectorFichero.read(buffer)) > 0) {
+                this.salida.write(buffer, "".length(), bytesLeidos);
+                this.salida.flush();
+                totalWrited += (long) bytesLeidos;
+            }
+
+            lectorFichero.close();
+            System.out.println("Nombre del fichero " + nombre + " BYTES ESCRTIOS " + totalWrited);
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Muestra los ficheros en la GUI
+     */
+    private void refrescarDescargas() {
+        SwingUtilities.invokeLater(() -> {
+            System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread());
+
+            try {
+                DefaultListModel<String> modelo = new DefaultListModel<>();
+                for (String descarga : listaDescargas) {
+                    modelo.addElement(descarga);
+                }
+                vista.listaGUI.setModel(modelo);
+            } catch (NullPointerException ex) {
+                System.out.println("ERROR: " + ex.getMessage());
+                throw new RuntimeException(ex);
+            } finally {
+                System.out.println("Ficheros subidos: ");
+                listaDescargas.forEach(System.out::println);
+            }
+        });
+    }
+
+
 }

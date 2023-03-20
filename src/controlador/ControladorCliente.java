@@ -2,7 +2,8 @@ package controlador;
 
 import gui.VistaCliente;
 import tasks.Transferencia;
-import tasks.WorkerEnvio;
+import tasks.WorkerDescarga;
+import tasks.WorkerSubida;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -12,6 +13,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class ControladorCliente implements ActionListener {
 
@@ -23,6 +25,7 @@ public class ControladorCliente implements ActionListener {
     private ObjectInputStream entrada;
     private DefaultListModel modelo;
     private boolean estado;
+    private String nombre;
     private File fichero;
 
 
@@ -56,7 +59,31 @@ public class ControladorCliente implements ActionListener {
                 break;
             }
             case "Refrescar Archivos Disponibles": {
-                //refrescar();
+                    Thread hilo = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            try {
+                                int seleccion = 0;
+                                salida.writeInt(seleccion);
+                                salida.flush();
+                                List <String >listaDes = (List<String>) entrada.readObject();
+
+                                listaFicheros(listaDes);
+
+                                for(String  fichero : listaDes){
+                                    System.out.println(fichero);
+                                }
+                            } catch (IOException ex) {
+                                throw new RuntimeException(ex);
+                            } catch (ClassNotFoundException ex) {
+                                throw new RuntimeException(ex);
+                            }
+
+
+
+                        }
+                    });
                 break;
             }
             case "Subir": {
@@ -67,7 +94,8 @@ public class ControladorCliente implements ActionListener {
     }
 
     private void descargar() {
-
+        WorkerDescarga descarga = new WorkerDescarga(entrada,salida,vistaCliente,nombre,fichero);
+        descarga.execute();
     }
 
     private void subirFichero() {
@@ -76,23 +104,22 @@ public class ControladorCliente implements ActionListener {
         int seleccion = fileChooser.showOpenDialog(null);
         if (seleccion == JFileChooser.APPROVE_OPTION) {
             fichero = fileChooser.getSelectedFile();
-            WorkerEnvio workerEnvio = new WorkerEnvio(salida, vistaCliente, fichero);
+            WorkerSubida workerEnvio = new WorkerSubida(salida, vistaCliente, fichero);
             workerEnvio.execute();
         }
     }
 
-    private void refrescar() {
+    private void listaFicheros(List<String> lista) {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 // Se borra la lista de descargas en la vista.
                 modelo.clear();
 
                 // Se itera a través de la lista de descargas.
-                Iterator var1 = listaDescargas.iterator();
-                while (var1.hasNext()) {
+                Iterator iterator = lista.iterator();
+                while (iterator.hasNext()) {
                     // Se obtiene la próxima descarga.
-                    String descarga = (String) var1.next();
-
+                    String descarga = (String) iterator.next();
                     // Se agrega la descarga a la lista en la vista.
                     modelo.addElement(descarga);
                 }
@@ -104,32 +131,33 @@ public class ControladorCliente implements ActionListener {
         Thread hilo = new Thread(new Runnable() {
             @Override
             public void run() {
-                try {
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        try{
 
-                    String ip = vistaCliente.txfIp.getText();
-                    int port = 12345;
-                    System.out.println("ESTOY EN EL HILO CONTROLADOR");
-                    cliente = new Socket(ip, port);
-                    SwingUtilities.invokeLater(new Runnable() {
-                        @Override
-                        public void run() {
+                            String ip = vistaCliente.txfIp.getText();
+                            int port = 12345;
+                            cliente = new Socket(ip, port);
+                            System.out.println("Cliente iniciado " + cliente.getInetAddress());
+                            salida = new ObjectOutputStream(cliente.getOutputStream());
+                            entrada = new ObjectInputStream(cliente.getInputStream());
+                            System.out.println("Se ha creado el flujo");
+
+
                             vistaCliente.btnSubirFichero.setEnabled(true);
                             vistaCliente.btnConectar.setText("Conectado");
                             vistaCliente.btnDescargarFichero.setEnabled(true);
                             vistaCliente.btnRefrescar.setEnabled(true);
                             vistaCliente.btnConectar.setEnabled(false);
+                        } catch (UnknownHostException e) {
+                            JOptionPane.showMessageDialog(null, "No se pudo establecer la conexión con el servidor.", "Error de conexión", JOptionPane.ERROR_MESSAGE);
+                        } catch (IOException e) {
+                            JOptionPane.showMessageDialog(null, "No se pudo establecer la conexión con el servidor.", "Error de conexión", JOptionPane.ERROR_MESSAGE);
                         }
-                    });
-                    salida = new ObjectOutputStream(cliente.getOutputStream());
-                    entrada = new ObjectInputStream(cliente.getInputStream());
 
-
-
-                } catch (UnknownHostException e) {
-                    JOptionPane.showMessageDialog(null, "No se pudo establecer la conexión con el servidor.", "Error de conexión", JOptionPane.ERROR_MESSAGE);
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(null, "Conexion perdida.", "Error de conexión", JOptionPane.ERROR_MESSAGE);
-                }
+                    }
+                });
             }
         });
         hilo.start();

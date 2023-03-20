@@ -43,7 +43,7 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="7f5ae" class="javax.swing.JList" binding="lista">
+          <component id="7f5ae" class="javax.swing.JList" binding="listaGUI">
             <constraints/>
             <properties/>
           </component>

@@ -11,12 +11,13 @@ import java.util.logging.Logger;
 public class VistaServidor {
     public JButton btnIniciar;
     public JTextArea txtClientes;
-    public JList lista;
+    public JList listaGUI;
     private JPanel pnlPrincipal;
     private JLabel lbl1;
     private JLabel lbl2;
     private JScrollPane scrollpnl;
 
+    public DefaultListModel modelo;
 
     private VistaServidor() {
         JFrame frame = new JFrame("Servidor");
@@ -26,9 +27,9 @@ public class VistaServidor {
         frame.setSize(new Dimension(450,450));
         //centrar ventana inicial
         frame.setLocationRelativeTo(null);
-        //modelo = new DefaultListModel<Transferencia>();
-        //lista.setModel(modelo);
-        //lista = new ArrayList<>();
+//        modelo = new DefaultListModel();
+//        lista.setModel(modelo);
+        listaGUI.setEnabled(false);
 
         frame.setVisible(true);
     }
