@@ -12,7 +12,6 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class ControladorCliente implements ActionListener {
@@ -25,7 +24,7 @@ public class ControladorCliente implements ActionListener {
     private ObjectInputStream entrada;
     private DefaultListModel modelo;
     private boolean estado;
-    private String seleccion;
+    private String ficheroSeleccionado;
     private File fichero;
 
 
@@ -75,7 +74,8 @@ public class ControladorCliente implements ActionListener {
                                     System.out.println(fichero);
                                 }
                             } catch (IOException ex) {
-                                throw new RuntimeException(ex);
+                                JOptionPane.showMessageDialog(null, "Conexion perdida", "Error de conexion", JOptionPane.ERROR_MESSAGE);
+                                System.exit(0);
                             } catch (ClassNotFoundException ex) {
                                 throw new RuntimeException(ex);
                             }
@@ -95,10 +95,10 @@ public class ControladorCliente implements ActionListener {
         if(vistaCliente.listaGUI.isSelectionEmpty()){
             JOptionPane.showMessageDialog(null, "Seleccione un fichero.", "Error de descarga", JOptionPane.ERROR_MESSAGE);
         }else{
-            seleccion = (String) vistaCliente.listaGUI.getSelectedValue();
-            WorkerDescarga descarga = new WorkerDescarga(entrada,salida,vistaCliente,seleccion,fichero);
+            ficheroSeleccionado = (String) vistaCliente.listaGUI.getSelectedValue();
+            System.out.println("Fichero seleccionado " + ficheroSeleccionado);
+            WorkerDescarga descarga = new WorkerDescarga(entrada,salida,vistaCliente, ficheroSeleccionado, fichero);
             descarga.execute();
-            System.out.println("Fichero seleccionado");
 
         }
     }

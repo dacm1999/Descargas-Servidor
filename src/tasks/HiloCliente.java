@@ -20,12 +20,20 @@ public class HiloCliente extends Thread {
     private ObjectInputStream entrada;
     private ControladorServidor controladorServidor;
 
+    /**
+     * Constructor de la clase HiloCliente
+     * @param socketCliente
+     * @param listaDescargas
+     * @param vista
+     */
     public HiloCliente(Socket socketCliente, List<String> listaDescargas, VistaServidor vista) {
         this.socketCliente = socketCliente;
         this.listaDescargas = listaDescargas;
         this.vista = vista;
     }
 
+    /**
+     */
     @Override
     public void run() {
         try {
@@ -59,6 +67,7 @@ public class HiloCliente extends Thread {
                     }
 
                     case 1: {
+
                     }
                     case 2: {
                         System.out.println("Descargar button " + " seleccion" + seleccion);
@@ -78,6 +87,9 @@ public class HiloCliente extends Thread {
     }
 
 
+    /**
+     * Envio la lista de ficheros
+     */
     private void enviarListaFicheros() {
         try {
             salida.writeObject(listaDescargas);
@@ -157,31 +169,36 @@ public class HiloCliente extends Thread {
 
     }
 
+
     private void descargas() {
         try {
-            String nombre = (String) this.entrada.readUTF();
-            File fichero = new File(nombre);
+            String nombreFichero = (String) this.entrada.readObject();
+            File fichero = new File(nombreFichero);
             long fileSize = fichero.length();
-            System.out.println("Nombre del fichero " + nombre + " tamaño del fichero " + fichero);
-            long totalWrited = 0L;
+            System.out.println("Nombre del fichero " + nombreFichero + " tamaño del fichero " + fichero);
+            long totalEscrito = 0L;
+
+            //Lo lee la clase WorkerDescarga
             this.salida.writeLong(fileSize);
             this.salida.flush();
             FileInputStream fileInputStream = new FileInputStream(fichero);
             byte[] buffer = new byte[1024];
-
             int bytesLeidos;
+
             while (fileSize > 0L && (bytesLeidos = fileInputStream.read(buffer)) > 0) {
                 this.salida.write(buffer, 0, bytesLeidos);
                 this.salida.flush();
-                totalWrited += (long) bytesLeidos;
+                totalEscrito +=  bytesLeidos;
             }
 
             fileInputStream.close();
-            System.out.println("Nombre del fichero " + nombre + " BYTES ESCRTIOS " + totalWrited);
+            System.out.println("Nombre del fichero " + nombreFichero + " BYTES ESCRTIOS " + totalEscrito);
 
         } catch (FileNotFoundException e) {
             System.out.println("Archivo no encontrado" + e.getClass());
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }

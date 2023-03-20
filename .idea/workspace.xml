@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="Practica Cliente-Servidor - RECUPERACION:jar" />
+    </artifacts-to-build>
+  </component>
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8f8c362d-1a02-4679-b959-2ee8a735e088" name="Changes" comment="Practica Cliente-Servidor">
+      <change afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tasks/HiloCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/HiloCliente.java" afterDir="false" />
@@ -49,7 +55,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Libraries",
+    "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "preferences.lookFeel",
@@ -93,8 +99,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.VistaCliente" />
         <item itemvalue="Application.VistaServidor" />
+        <item itemvalue="Application.VistaCliente" />
       </list>
     </recent_temporary>
   </component>
@@ -107,7 +113,7 @@
       <option name="presentableId" value="Default" />
       <updated>1678883463448</updated>
       <workItem from="1678883464375" duration="10949000" />
-      <workItem from="1678981853850" duration="40684000" />
+      <workItem from="1678981853850" duration="47291000" />
     </task>
     <task id="LOCAL-00001" summary="PruebaGIT">
       <created>1678884371052</created>
@@ -137,7 +143,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679327538219</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Practica Cliente-Servidor">
+      <created>1679330257904</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1679330257904</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

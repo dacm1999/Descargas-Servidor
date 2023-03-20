@@ -11,15 +11,15 @@ import java.util.List;
 import static java.lang.Thread.sleep;
 import static javax.xml.ws.Endpoint.publish;
 
-public class WorkerDescarga extends SwingWorker<Void,Integer> {
+public class WorkerDescarga extends SwingWorker<Void, Integer> {
 
-    Socket socket;
-    boolean pausado;
-    int contador;
-    long fileSize;
-    ObjectInputStream entrada;
-    ObjectOutputStream salida;
-    VistaCliente vistaCliente;
+    private Socket socket;
+    private boolean pausado;
+    private int contador;
+    private long fileSize;
+    private ObjectInputStream entrada;
+    private ObjectOutputStream salida;
+    private VistaCliente vistaCliente;
     private String ficheroSeleccionado;
     private File file;
 
@@ -29,48 +29,60 @@ public class WorkerDescarga extends SwingWorker<Void,Integer> {
         this.salida = salida;
         this.vistaCliente = vistaCliente;
         this.ficheroSeleccionado = ficheroSeleccionado;
-        this.file = file;
+         this.file = file;
+        contador = 0;
+    }
+
+    @Override
+    protected void done() {
+        vistaCliente.lblEstado.setText("Estado: Descarga finalizada");
+        vistaCliente.lblEstado.setBackground(Color.GREEN);
     }
 
     @Override
     protected void process(List<Integer> valores) {
-        vistaCliente.barraProgreso.setValue((Integer) valores.get(valores.size() - 1));
-
+        if(!valores.isEmpty()){
+            vistaCliente.barraProgreso.setValue((Integer) valores.get(valores.size() - 1));
+        }
     }
 
     @Override
     protected Void doInBackground() throws Exception {
 
-        int selec = 2;
+        int selec = 2; //Envio la opcion he presionado
         salida.writeInt(selec);
-        salida.writeUTF(ficheroSeleccionado);
+        salida.writeObject(ficheroSeleccionado);
         salida.flush();
 
-        try {
-            sleep(1000);
-            vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
-            vistaCliente.lblEstado.setForeground(Color.black);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        if (contador > 0) {
+            while (!vistaCliente.lblEstado.getText().equals("Estado: Descarga finalizada")) {
+                try {
+                    sleep(100);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+            }
         }
+        contador++;
+        vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
+        vistaCliente.lblEstado.setForeground(Color.black);
 
+        //LEO el fichero que me envia HiloCliente
         fileSize = (long) entrada.readLong();
-        System.out.println("Tamaño del fichero" + fileSize);
-
+        System.out.println("Tamañado del fichero " + fileSize);
         FileOutputStream escritorFichero = new FileOutputStream(file);
         byte[] buffer = new byte[1024];
-        long totalLeido = 0L;
+        long totalLeido = 0;
         int bytesLeidos;
-
 
         while(totalLeido < fileSize && (bytesLeidos = entrada.read(buffer)) > 0 ){
             escritorFichero.write(buffer, 0, bytesLeidos);
-            totalLeido += (long)bytesLeidos;
+            totalLeido += bytesLeidos;
             int progreso =(int) (totalLeido*100/fileSize);
             publish(progreso);
         }
 
-        System.out.println("Fichero escrito " + file.getName() + " tamaño: " + totalLeido);
+        System.out.println("Fichero escrito " + ficheroSeleccionado + " tamaño: " + totalLeido);
         escritorFichero.close();
 
         return null;
