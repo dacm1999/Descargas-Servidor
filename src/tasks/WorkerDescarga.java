@@ -23,7 +23,6 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
     private File file;
     private boolean estado;
 
-
     public WorkerDescarga(ObjectInputStream entrada, ObjectOutputStream salida, VistaCliente vistaCliente, String ficheroSeleccionado, File file) {
         this.entrada = entrada;
         this.salida = salida;
@@ -52,7 +51,6 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
     @Override
     protected Void doInBackground() throws Exception {
         try {
-            do {
                 System.out.println("-------------CLASE WORKER DESCARGA-------------");
                 salida.writeObject(nombreFichero);
                 salida.flush();
@@ -78,13 +76,9 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
 
                 System.out.println("Fichero escrito " + nombreFichero + " tamaño: " + totalLeido);
                 escritorFichero.close();
-                nombreFichero = (String) entrada.readObject(); // Lee un nuevo nombre de fichero si está disponible
-            } while (nombreFichero != null);
         } catch (EOFException e) {
-            // Expected exception when the socket is closed by the client
             System.out.println("Cliente desconectado");
         } catch (StreamCorruptedException e) {
-            // Handle corrupted data
             System.err.println("Datos corruptos recibidos");
         } catch (FileNotFoundException e) {
             System.out.println("Archivo no encontrado" + e.getClass());

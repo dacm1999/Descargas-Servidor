@@ -18,6 +18,7 @@ public class ControladorCliente implements ActionListener {
 
     public VistaCliente vistaCliente;
     public List<String> listaDescargas;
+    List<String> listaDes;
     public Transferencia t;
     private Socket cliente;
     private ObjectOutputStream salida;
@@ -80,7 +81,7 @@ public class ControladorCliente implements ActionListener {
                             opcion = 0;
                             salida.writeInt(opcion);
                             salida.flush();
-                            List<String> listaDes = (List<String>) entrada.readObject();
+                            listaDes = (List<String>) entrada.readObject();
 
                             listaFicheros(listaDes);
 

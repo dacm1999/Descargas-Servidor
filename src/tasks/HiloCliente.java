@@ -194,6 +194,7 @@ public class HiloCliente extends Thread {
     }
 
 
+
     /**
      * Muestra los ficheros en la GUI
      */
