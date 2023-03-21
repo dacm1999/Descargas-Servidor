@@ -6,8 +6,9 @@ import gui.VistaServidor;
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.Iterator;
+import java.net.SocketException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class HiloCliente extends Thread {
 
@@ -20,7 +21,7 @@ public class HiloCliente extends Thread {
     private ObjectInputStream entrada;
     private ControladorServidor controladorServidor;
     private int seleccion;
-
+    private boolean estadoDescarga;
     private File file;
 
     /**
@@ -146,8 +147,6 @@ public class HiloCliente extends Thread {
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 
     /**
@@ -163,7 +162,7 @@ public class HiloCliente extends Thread {
                 long totalEscrito = 0L;
 
                 //Lo lee la clase WorkerDescarga
-                salida.writeObject(fileSize);
+                salida.writeObject(file.length());
                 salida.flush();
 
                 FileInputStream fileInputStream = new FileInputStream(file);
@@ -175,24 +174,25 @@ public class HiloCliente extends Thread {
                     salida.flush();
                     totalEscrito += bytesLeidos;
                 }
-                fileInputStream.close();
                 System.out.println("Nombre del fichero " + nombreFichero + " BYTES ESCRITOS " + totalEscrito);
+                fileInputStream.close();
             } while (!socketCliente.isClosed());
             salida.close();
             entrada.close();
-        } catch (EOFException e) {
-            // Expected exception when the socket is closed by the client
-            System.out.println("Cliente desconectado");
-        } catch (StreamCorruptedException e) {
-            // Handle corrupted data
-            System.err.println("Datos corruptos recibidos");
-        } catch (FileNotFoundException e) {
-            System.out.println("Archivo no encontrado" + e.getClass());
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        }catch (OptionalDataException ex){
+            System.out.println("ERROR" + ex.getMessage());
+        } catch (SocketException ex) {
+            System.out.println("CLIENTE DESCONECTADO " + socketCliente.getInetAddress().getHostAddress());
+        } catch (NullPointerException e) {
+            System.out.println("NO DEBE SER NULL");
+        } catch (IOException ex) {
+            System.out.println("ERROR EN EL BUFFER");
+            ex.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            System.out.println("Clase no encontrada");
+        } catch (Exception e) {
         }
     }
-
 
 
     /**

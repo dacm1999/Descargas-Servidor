@@ -1,7 +1,6 @@
 package controlador;
 
 import gui.VistaCliente;
-import tasks.Transferencia;
 import tasks.WorkerDescarga;
 import tasks.WorkerSubida;
 
@@ -19,7 +18,6 @@ public class ControladorCliente implements ActionListener {
     public VistaCliente vistaCliente;
     public List<String> listaDescargas;
     List<String> listaDes;
-    public Transferencia t;
     private Socket cliente;
     private ObjectOutputStream salida;
     private ObjectInputStream entrada;

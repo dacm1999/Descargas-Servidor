@@ -2,7 +2,6 @@ package controlador;
 
 import gui.VistaServidor;
 import tasks.HiloCliente;
-import tasks.Transferencia;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -19,7 +18,6 @@ public class ControladorServidor implements ActionListener {
     private ServerSocket serverSocket;
     private Socket cliente;
     private boolean estado;
-    private Transferencia transferencia;
     public DefaultListModel modelo;
     private List <String> listaDescargas;
 

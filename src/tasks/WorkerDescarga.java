@@ -21,7 +21,7 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
     private VistaCliente vistaCliente;
     private String nombreFichero;
     private File file;
-    private boolean estado;
+    private boolean estadoDescarga;
 
     public WorkerDescarga(ObjectInputStream entrada, ObjectOutputStream salida, VistaCliente vistaCliente, String ficheroSeleccionado, File file) {
         this.entrada = entrada;
@@ -29,7 +29,7 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
         this.vistaCliente = vistaCliente;
         this.nombreFichero = ficheroSeleccionado;
         this.file = file;
-        estado = true;
+        estadoDescarga = false;
     }
 
     @Override
@@ -51,31 +51,31 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
     @Override
     protected Void doInBackground() throws Exception {
         try {
-                System.out.println("-------------CLASE WORKER DESCARGA-------------");
-                salida.writeObject(nombreFichero);
-                salida.flush();
-                fileSize = (long) entrada.readObject();
+            System.out.println("-------------CLASE WORKER DESCARGA-------------");
+            salida.writeObject(nombreFichero);
+            salida.flush();
+            fileSize = (long) entrada.readObject();
 
-                System.out.println("Nombre del fichero " + nombreFichero + " tamañado del fichero " + fileSize);
+            System.out.println("Nombre del fichero " + nombreFichero + " tamañado del fichero " + fileSize);
 
-                vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
-                vistaCliente.lblEstado.setForeground(Color.black);
+            vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
+            vistaCliente.lblEstado.setForeground(Color.black);
 
-                //LEO el fichero que me envia HiloCliente
-                FileOutputStream escritorFichero = new FileOutputStream("copy_" + file);
-                byte[] buffer = new byte[1024];
-                long totalLeido = 0;
-                int bytesLeidos;
+            //LEO el fichero que me envia HiloCliente
+            FileOutputStream escritorFichero = new FileOutputStream("copy_" + file);
+            byte[] buffer = new byte[1024];
+            long totalLeido = 0;
+            int bytesLeidos;
 
-                while (totalLeido < fileSize && (bytesLeidos = entrada.read(buffer)) > 0) {
-                    escritorFichero.write(buffer, 0, bytesLeidos);
-                    totalLeido += bytesLeidos;
-                    int progreso = (int) (totalLeido * 100 / fileSize);
-                    publish(progreso);
-                }
+            while (totalLeido < fileSize && (bytesLeidos = entrada.read(buffer)) > 0) {
+                escritorFichero.write(buffer, 0, bytesLeidos);
+                totalLeido += bytesLeidos;
+                int progreso = (int) (totalLeido * 100 / fileSize);
+                publish(progreso);
+            }
 
-                System.out.println("Fichero escrito " + nombreFichero + " tamaño: " + totalLeido);
-                escritorFichero.close();
+            System.out.println("Fichero escrito " + nombreFichero + " tamaño: " + totalLeido);
+            escritorFichero.close();
         } catch (EOFException e) {
             System.out.println("Cliente desconectado");
         } catch (StreamCorruptedException e) {
