@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="Practica Cliente-Servidor - RECUPERACION:jar" />
+      <artifact name="Servidor - RECUPERACION:jar" />
     </artifacts-to-build>
   </component>
   <component name="AutoImportSettings">
@@ -10,11 +10,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8f8c362d-1a02-4679-b959-2ee8a735e088" name="Changes" comment="Practica Cliente-Servidor">
-      <change afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/artifacts/Cliente_jar2.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controlador/ControladorServidor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controlador/ControladorServidor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gui/VistaCliente.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/VistaCliente.form" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tasks/HiloCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/HiloCliente.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/WorkerSubida.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/WorkerSubida.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -99,8 +102,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.VistaServidor" />
         <item itemvalue="Application.VistaCliente" />
+        <item itemvalue="Application.VistaServidor" />
       </list>
     </recent_temporary>
   </component>
@@ -113,7 +116,8 @@
       <option name="presentableId" value="Default" />
       <updated>1678883463448</updated>
       <workItem from="1678883464375" duration="10949000" />
-      <workItem from="1678981853850" duration="47291000" />
+      <workItem from="1678981853850" duration="48131000" />
+      <workItem from="1679352790439" duration="20968000" />
     </task>
     <task id="LOCAL-00001" summary="PruebaGIT">
       <created>1678884371052</created>
@@ -150,7 +154,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679330257904</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Practica Cliente-Servidor">
+      <created>1679338278964</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1679338278964</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

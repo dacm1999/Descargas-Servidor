@@ -28,8 +28,8 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
     @Override
     protected Void doInBackground() throws Exception {
         //envio el boton que he pulsado
-        int seleccion = 3;
-        salida.writeInt(seleccion);
+//        int seleccion = 3;
+//        salida.writeInt(seleccion);
 
 
         System.out.println("-------------CLASE WORKER ENVIO-------------");
@@ -52,15 +52,10 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
         while ((bytesLeidos = entradaFichero.read(buffer)) > 0) {
             salida.write(buffer, 0, bytesLeidos);
             salida.flush();
-            totalBytesLeidos += (long)bytesLeidos;
-            int porcentaje = (int)(totalBytesLeidos / tamanoFichero * 100.0D);
-
-//            Integer[] var = new Integer[1];
-//            var[0] = porcentaje;
-//            publish(var);
+            totalBytesLeidos += bytesLeidos;
+            int porcentaje = (int)(totalBytesLeidos *100 / tamanoFichero);
             publish(porcentaje);
         }
-
         System.out.println("NOMBRE DEL FICHERO: " + fichero.getName() + " -- tamaño del fichero: " + tamanoFichero);
         entradaFichero.close();
         return null;
@@ -69,7 +64,10 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
     @Override
     protected void process(List<Integer> valores) {
         if(!valores.isEmpty()) {
-            vista.barraProgreso.setValue((Integer) valores.get(valores.size() - 1));
+            int valor = valores.get(valores.size() - 1);
+            vista.barraProgreso.setValue(valor);
+            vista.barraProgreso.setString(valor + "%");
+//            vista.barraProgreso.setValue((Integer) valores.get(valores.size() - 1));
         }
     }
 

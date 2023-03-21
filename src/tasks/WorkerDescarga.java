@@ -15,75 +15,82 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
 
     private Socket socket;
     private boolean pausado;
-    private int contador;
     private long fileSize;
     private ObjectInputStream entrada;
     private ObjectOutputStream salida;
     private VistaCliente vistaCliente;
-    private String ficheroSeleccionado;
+    private String nombreFichero;
     private File file;
+    private boolean estado;
 
 
     public WorkerDescarga(ObjectInputStream entrada, ObjectOutputStream salida, VistaCliente vistaCliente, String ficheroSeleccionado, File file) {
         this.entrada = entrada;
         this.salida = salida;
         this.vistaCliente = vistaCliente;
-        this.ficheroSeleccionado = ficheroSeleccionado;
-         this.file = file;
-        contador = 0;
+        this.nombreFichero = ficheroSeleccionado;
+        this.file = file;
+        estado = true;
     }
 
     @Override
     protected void done() {
+        vistaCliente.barraProgreso.setValue(100);
         vistaCliente.lblEstado.setText("Estado: Descarga finalizada");
-        vistaCliente.lblEstado.setBackground(Color.GREEN);
     }
 
     @Override
     protected void process(List<Integer> valores) {
-        if(!valores.isEmpty()){
-            vistaCliente.barraProgreso.setValue((Integer) valores.get(valores.size() - 1));
+        if (!valores.isEmpty()) {
+            int valor = valores.get(valores.size() - 1);
+            vistaCliente.barraProgreso.setValue(valor);
+            vistaCliente.barraProgreso.setString(valor + "%");
+//            vistaCliente.barraProgreso.setValue((Integer) valores.get(valores.size() - 1));
         }
     }
 
     @Override
     protected Void doInBackground() throws Exception {
+        try {
+            do {
+                System.out.println("-------------CLASE WORKER DESCARGA-------------");
+                salida.writeObject(nombreFichero);
+                salida.flush();
+                fileSize = (long) entrada.readObject();
 
-        int selec = 2; //Envio la opcion he presionado
-        salida.writeInt(selec);
-        salida.writeObject(ficheroSeleccionado);
-        salida.flush();
+                System.out.println("Nombre del fichero " + nombreFichero + " tamañado del fichero " + fileSize);
 
-        if (contador > 0) {
-            while (!vistaCliente.lblEstado.getText().equals("Estado: Descarga finalizada")) {
-                try {
-                    sleep(100);
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
+                vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
+                vistaCliente.lblEstado.setForeground(Color.black);
+
+                //LEO el fichero que me envia HiloCliente
+                FileOutputStream escritorFichero = new FileOutputStream("copy_" + file);
+                byte[] buffer = new byte[1024];
+                long totalLeido = 0;
+                int bytesLeidos;
+
+                while (totalLeido < fileSize && (bytesLeidos = entrada.read(buffer)) > 0) {
+                    escritorFichero.write(buffer, 0, bytesLeidos);
+                    totalLeido += bytesLeidos;
+                    int progreso = (int) (totalLeido * 100 / fileSize);
+                    publish(progreso);
                 }
-            }
+
+                System.out.println("Fichero escrito " + nombreFichero + " tamaño: " + totalLeido);
+                escritorFichero.close();
+                nombreFichero = (String) entrada.readObject(); // Lee un nuevo nombre de fichero si está disponible
+            } while (nombreFichero != null);
+        } catch (EOFException e) {
+            // Expected exception when the socket is closed by the client
+            System.out.println("Cliente desconectado");
+        } catch (StreamCorruptedException e) {
+            // Handle corrupted data
+            System.err.println("Datos corruptos recibidos");
+        } catch (FileNotFoundException e) {
+            System.out.println("Archivo no encontrado" + e.getClass());
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
-        contador++;
-        vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
-        vistaCliente.lblEstado.setForeground(Color.black);
-
-        //LEO el fichero que me envia HiloCliente
-        fileSize = (long) entrada.readLong();
-        System.out.println("Tamañado del fichero " + fileSize);
-        FileOutputStream escritorFichero = new FileOutputStream(file);
-        byte[] buffer = new byte[1024];
-        long totalLeido = 0;
-        int bytesLeidos;
-
-        while(totalLeido < fileSize && (bytesLeidos = entrada.read(buffer)) > 0 ){
-            escritorFichero.write(buffer, 0, bytesLeidos);
-            totalLeido += bytesLeidos;
-            int progreso =(int) (totalLeido*100/fileSize);
-            publish(progreso);
-        }
-
-        System.out.println("Fichero escrito " + ficheroSeleccionado + " tamaño: " + totalLeido);
-        escritorFichero.close();
 
         return null;
     }

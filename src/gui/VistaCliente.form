@@ -111,7 +111,7 @@
           <forms/>
         </constraints>
         <properties>
-          <text value="Estado: "/>
+          <text value=""/>
         </properties>
       </component>
       <component id="17236" class="javax.swing.JButton" binding="btnDescargarFichero">

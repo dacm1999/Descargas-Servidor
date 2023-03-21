@@ -19,9 +19,13 @@ public class HiloCliente extends Thread {
     private ObjectOutputStream salida;
     private ObjectInputStream entrada;
     private ControladorServidor controladorServidor;
+    private int seleccion;
+
+    private File file;
 
     /**
      * Constructor de la clase HiloCliente
+     *
      * @param socketCliente
      * @param listaDescargas
      * @param vista
@@ -30,22 +34,26 @@ public class HiloCliente extends Thread {
         this.socketCliente = socketCliente;
         this.listaDescargas = listaDescargas;
         this.vista = vista;
+        seleccion = 0;
     }
 
     /**
+     *
      */
     @Override
     public void run() {
         try {
-            this.salida = new ObjectOutputStream(this.socketCliente.getOutputStream());
-            this.entrada = new ObjectInputStream(this.socketCliente.getInputStream());
+            do {
+                this.salida = new ObjectOutputStream(this.socketCliente.getOutputStream());
+                this.entrada = new ObjectInputStream(this.socketCliente.getInputStream());
 
-            // Agrega el nombre del cliente a la lista de clientes y actualiza la vista
-            String ip = String.valueOf(this.socketCliente.getInetAddress());
+                // Agrega el nombre del cliente a la lista de clientes y actualiza la vista
+                String ip = String.valueOf(this.socketCliente.getInetAddress());
 
-            // Maneja las solicitudes del cliente
-            opciones();
-            refrescarDescargas();
+                // Maneja las solicitudes del cliente
+                opciones();
+                refrescarDescargas();
+            } while (!socketCliente.isClosed());
 
         } catch (IOException e) {
             System.err.println("Error en la comunicación con el cliente: " + e.getMessage());
@@ -55,33 +63,38 @@ public class HiloCliente extends Thread {
     }
 
     private void opciones() {
-        while (true) {
+        while (!socketCliente.isClosed()) { // Verifica si la conexión sigue abierta
             try {
-                int seleccion = entrada.readInt();
-                System.out.println("opcion seleccionada " + seleccion);
-                switch (seleccion) {
-                    case 0: {
-                        System.out.println("Refrescar button " + " seleccion " + seleccion);
-                        enviarListaFicheros();
-                        break;
-                    }
+                if (entrada.available() >= 4) { // Verifica si hay al menos 4 bytes disponibles para leer
+                    seleccion = entrada.readInt();
+                    System.out.println("opcion seleccionada " + seleccion);
+                    switch (seleccion) {
+                        case 0: {
+                            System.out.println("Refrescar button " + " seleccion " + seleccion);
+                            enviarListaFicheros();
+                            break;
+                        }
+                        case 1: {
+                            System.out.println("Descargar button " + " seleccion" + seleccion);
+                            descargas();
+                            break;
+                        }
+                        case 2: {
+                            ficheroSubido();
+                            refrescarDescargas();
+                            break;
+                        }
+                        case 3: {
 
-                    case 1: {
-
-                    }
-                    case 2: {
-                        System.out.println("Descargar button " + " seleccion" + seleccion);
-                        descargas();
-                        break;
-                    }
-
-                    case 3: {
-                        ficheroSubido();
-                        refrescarDescargas();
+                            break;
+                        }
                     }
                 }
+            } catch (EOFException e) { // Captura específicamente la excepción EOFException
+                System.out.println("Se ha cerrado la conexión del servidor");
+                break;
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
     }
@@ -108,12 +121,6 @@ public class HiloCliente extends Thread {
 
             if (tamanoFichero > 0L) {
                 int i = 1;
-//                String nombreTemporal = nombreFichero;
-//                while (listaDescargas.contains(nombreTemporal)) {
-//                    nombreTemporal = i + "_" + nombreFichero;
-//                    listaDescargas.add(nombreTemporal);
-//                    ++i;
-//                }
 
                 System.out.println("Subiendo archivo: " + nombreFichero + ", tamaño: " + tamanoFichero + getClass());
                 FileOutputStream ficheroSalida = new FileOutputStream(nombreFichero);
@@ -130,32 +137,6 @@ public class HiloCliente extends Thread {
 
                 for (String nombre : listaDescargas) {
                     System.out.println("ficheros agregados: " + nombre);
-//            long tamanoFichero = entrada.readLong();
-//            System.out.println("Tamaño del fichero a recibir: " + tamanoFichero);
-//
-//            String nombreFichero = (String) entrada.readObject();
-//            System.out.println("Nombre del fichero a recibir: " + nombreFichero);
-//
-
-//            FileOutputStream ficheroSalida = new FileOutputStream(nombreFichero);
-//            byte[] buffer = new byte[1024];
-//            int bytesLeidos;
-//            long totalBytesLeidos = 0L;
-//
-//
-//            while ((bytesLeidos = entrada.read(buffer)) > 0) {
-//                ficheroSalida.write(buffer, 0, bytesLeidos);
-//                totalBytesLeidos += (long) bytesLeidos;
-//            }
-//            System.out.println("Total leido " + totalBytesLeidos + " del fichero " + nombreFichero);
-//
-//            ficheroSalida.close();
-//            listaDescargas.add(nombreFichero);
-//
-//            for(String nombre : listaDescargas){
-//                System.out.println("Nombre de ficheros: " + nombre);
-//            }
-
                 }
             }
         } catch (FileNotFoundException e) {
@@ -169,39 +150,49 @@ public class HiloCliente extends Thread {
 
     }
 
-
+    /**
+     *
+     */
     private void descargas() {
         try {
-            String nombreFichero = (String) this.entrada.readObject();
-            File fichero = new File(nombreFichero);
-            long fileSize = fichero.length();
-            System.out.println("Nombre del fichero " + nombreFichero + " tamaño del fichero " + fichero);
-            long totalEscrito = 0L;
+            do {
+                String nombreFichero = (String) entrada.readObject();
+                file = new File(nombreFichero);
+                long fileSize = file.length();
+                System.out.println("Nombre del fichero " + nombreFichero + " tamaño del fichero " + fileSize);
+                long totalEscrito = 0L;
 
-            //Lo lee la clase WorkerDescarga
-            this.salida.writeLong(fileSize);
-            this.salida.flush();
-            FileInputStream fileInputStream = new FileInputStream(fichero);
-            byte[] buffer = new byte[1024];
-            int bytesLeidos;
+                //Lo lee la clase WorkerDescarga
+                salida.writeObject(fileSize);
+                salida.flush();
 
-            while (fileSize > 0L && (bytesLeidos = fileInputStream.read(buffer)) > 0) {
-                this.salida.write(buffer, 0, bytesLeidos);
-                this.salida.flush();
-                totalEscrito +=  bytesLeidos;
-            }
+                FileInputStream fileInputStream = new FileInputStream(file);
+                byte[] buffer = new byte[1024];
+                int bytesLeidos;
 
-            fileInputStream.close();
-            System.out.println("Nombre del fichero " + nombreFichero + " BYTES ESCRTIOS " + totalEscrito);
-
+                while (totalEscrito < fileSize && (bytesLeidos = fileInputStream.read(buffer)) > 0) {
+                    salida.write(buffer, 0, bytesLeidos);
+                    salida.flush();
+                    totalEscrito += bytesLeidos;
+                }
+                fileInputStream.close();
+                System.out.println("Nombre del fichero " + nombreFichero + " BYTES ESCRITOS " + totalEscrito);
+            } while (!socketCliente.isClosed());
+            salida.close();
+            entrada.close();
+        } catch (EOFException e) {
+            // Expected exception when the socket is closed by the client
+            System.out.println("Cliente desconectado");
+        } catch (StreamCorruptedException e) {
+            // Handle corrupted data
+            System.err.println("Datos corruptos recibidos");
         } catch (FileNotFoundException e) {
             System.out.println("Archivo no encontrado" + e.getClass());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     /**
      * Muestra los ficheros en la GUI
@@ -213,7 +204,7 @@ public class HiloCliente extends Thread {
                 System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread());
 
                 try {
-                    DefaultListModel<String> modelo = new DefaultListModel<>();
+                    DefaultListModel modelo = new DefaultListModel<>();
                     for (String descarga : listaDescargas) {
                         modelo.addElement(descarga);
                     }

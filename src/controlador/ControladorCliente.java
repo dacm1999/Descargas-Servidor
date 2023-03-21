@@ -26,6 +26,7 @@ public class ControladorCliente implements ActionListener {
     private boolean estado;
     private String ficheroSeleccionado;
     private File fichero;
+    private int opcion;
 
 
     public ControladorCliente(VistaCliente vistaCliente) {
@@ -33,8 +34,9 @@ public class ControladorCliente implements ActionListener {
         vincularListener(this);
 
         listaDescargas = new ArrayList<>();
-        modelo = new DefaultListModel();
-        vistaCliente.listaGUI.setModel(modelo);
+        ficheroSeleccionado = "";
+//        modelo = new DefaultListModel();
+//        vistaCliente.listaGUI.setModel(modelo);
     }
 
     private void vincularListener(ActionListener listener) {
@@ -54,50 +56,69 @@ public class ControladorCliente implements ActionListener {
                 break;
             }
             case "Descargar": {
-                descargar();
+                Thread hilo = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                                opcion = 1;
+                                salida.writeInt(opcion);
+                                descargar();
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(null, "Conexion perdida", "Error de conexion", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                });
+                hilo.start();
                 break;
             }
             case "Refrescar Archivos Disponibles": {
-                    Thread hilo = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
+                Thread hilo = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
 
-                            try {
-                                int seleccion = 0;
-                                salida.writeInt(seleccion);
-                                salida.flush();
-                                List <String >listaDes = (List<String>) entrada.readObject();
+                        try {
+                            opcion = 0;
+                            salida.writeInt(opcion);
+                            salida.flush();
+                            List<String> listaDes = (List<String>) entrada.readObject();
 
-                                listaFicheros(listaDes);
+                            listaFicheros(listaDes);
 
-                                for(String  fichero : listaDes){
-                                    System.out.println(fichero);
-                                }
-                            } catch (IOException ex) {
-                                JOptionPane.showMessageDialog(null, "Conexion perdida", "Error de conexion", JOptionPane.ERROR_MESSAGE);
-                                System.exit(0);
-                            } catch (ClassNotFoundException ex) {
-                                throw new RuntimeException(ex);
+                            for (String fichero : listaDes) {
+                                System.out.println(fichero);
                             }
+                        } catch (IOException ex) {
+                            JOptionPane.showMessageDialog(null, "Conexion perdida", "Error de conexion", JOptionPane.ERROR_MESSAGE);
+                            System.exit(0);
+                        } catch (ClassNotFoundException ex) {
+                            throw new RuntimeException(ex);
                         }
-                    });
-                    hilo.start();
+                    }
+                });
+                hilo.start();
                 break;
             }
             case "Subir": {
-                subirFichero();
+                try {
+                    opcion = 2;
+                    salida.writeInt(opcion);
+                    subirFichero();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
                 break;
             }
         }
     }
 
     private void descargar() {
-        if(vistaCliente.listaGUI.isSelectionEmpty()){
+        if (vistaCliente.listaGUI.isSelectionEmpty()) {
             JOptionPane.showMessageDialog(null, "Seleccione un fichero.", "Error de descarga", JOptionPane.ERROR_MESSAGE);
-        }else{
+        } else {
             ficheroSeleccionado = (String) vistaCliente.listaGUI.getSelectedValue();
-            System.out.println("Fichero seleccionado " + ficheroSeleccionado);
-            WorkerDescarga descarga = new WorkerDescarga(entrada,salida,vistaCliente, ficheroSeleccionado, fichero);
+            fichero = new File(ficheroSeleccionado);
+            System.out.println("Fichero seleccionado " + ficheroSeleccionado + " " + getClass());
+            WorkerDescarga descarga = new WorkerDescarga(entrada, salida, vistaCliente, ficheroSeleccionado, fichero);
             descarga.execute();
 
         }
@@ -119,7 +140,7 @@ public class ControladorCliente implements ActionListener {
             System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread());
 
             try {
-                DefaultListModel<String> modelo = new DefaultListModel<>();
+                DefaultListModel modelo = new DefaultListModel<>();
                 for (String fichero : lista) {
                     modelo.addElement(fichero);
                 }
@@ -135,39 +156,31 @@ public class ControladorCliente implements ActionListener {
     }
 
     public void conectar() {
-        Thread hilo = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        try{
+        try {
+            String ip = vistaCliente.txfIp.getText();
+            int port = 12345;
+            cliente = new Socket(ip, port);
+            System.out.println("Cliente iniciado " + cliente.getInetAddress());
+            salida = new ObjectOutputStream(cliente.getOutputStream());
+            entrada = new ObjectInputStream(cliente.getInputStream());
+            System.out.println("Se ha creado el flujo");
+            SwingUtilities.invokeLater(new Runnable() {
+                @Override
+                public void run() {
 
-                            String ip = vistaCliente.txfIp.getText();
-                            int port = 12345;
-                            cliente = new Socket(ip, port);
-                            System.out.println("Cliente iniciado " + cliente.getInetAddress());
-                            salida = new ObjectOutputStream(cliente.getOutputStream());
-                            entrada = new ObjectInputStream(cliente.getInputStream());
-                            System.out.println("Se ha creado el flujo");
+                    vistaCliente.btnSubirFichero.setEnabled(true);
+                    vistaCliente.btnConectar.setText("Conectado");
+                    vistaCliente.btnDescargarFichero.setEnabled(true);
+                    vistaCliente.btnRefrescar.setEnabled(true);
+                    vistaCliente.btnConectar.setEnabled(false);
 
+                }
+            });
+        } catch (UnknownHostException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
-                            vistaCliente.btnSubirFichero.setEnabled(true);
-                            vistaCliente.btnConectar.setText("Conectado");
-                            vistaCliente.btnDescargarFichero.setEnabled(true);
-                            vistaCliente.btnRefrescar.setEnabled(true);
-                            vistaCliente.btnConectar.setEnabled(false);
-                        } catch (UnknownHostException e) {
-                            JOptionPane.showMessageDialog(null, "No se pudo establecer la conexión con el servidor.", "Error de conexión", JOptionPane.ERROR_MESSAGE);
-                        } catch (IOException e) {
-                            JOptionPane.showMessageDialog(null, "No se pudo establecer la conexión con el servidor.", "Error de conexión", JOptionPane.ERROR_MESSAGE);
-                        }
-
-                    }
-                });
-            }
-        });
-        hilo.start();
     }
-
 }

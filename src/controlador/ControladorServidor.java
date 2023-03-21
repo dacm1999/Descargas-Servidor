@@ -28,9 +28,10 @@ public class ControladorServidor implements ActionListener {
         vincularListeners(this);
 
         listaDescargas = new ArrayList();
-
-        modelo = new DefaultListModel();
-        vistaServidor.listaGUI.setModel(modelo);
+        estado = true;
+//
+//        modelo = new DefaultListModel();
+//        vistaServidor.listaGUI.setModel(modelo);
 //        listaDescargas = vistaServidor.listaGUI.getSelectedValuesList();
     }
 
@@ -63,7 +64,7 @@ public class ControladorServidor implements ActionListener {
             Thread hilo = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while (!serverSocket.isClosed()) {
+                    while (estado) {
                         try {
                             cliente = serverSocket.accept();
                             SwingUtilities.invokeLater(new Runnable() {
@@ -71,8 +72,8 @@ public class ControladorServidor implements ActionListener {
                                 public void run() {
                                     vistaServidor.txtClientes.append(cliente.getInetAddress().getHostAddress() + " conectado\n");
                                     System.out.println("Cliente conectado: " + cliente.getInetAddress());
-                                    HiloCliente cliente1 = new HiloCliente(cliente,listaDescargas,vistaServidor);
 
+                                    HiloCliente cliente1 = new HiloCliente(cliente,listaDescargas,vistaServidor);
                                     cliente1.start();
                                 }
                             });
