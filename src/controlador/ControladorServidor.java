@@ -21,6 +21,10 @@ public class ControladorServidor implements ActionListener {
     public DefaultListModel modelo;
     private List <String> listaDescargas;
 
+    /**
+     * Constructor de la clase ControladorServidor
+     * @param vistaServidor
+     */
     public ControladorServidor(VistaServidor vistaServidor) {
         this.vistaServidor = vistaServidor;
         vincularListeners(this);
@@ -44,14 +48,18 @@ public class ControladorServidor implements ActionListener {
 
         switch (comando) {
             case "Iniciar Servidor": {
-                inicio2();
+                inicio();
                 break;
             }
         }
     }
 
-
-    public void inicio2() {
+    /**
+     * Inicia el servidor creando un socket en el puerto 12345 y aceptando conexiones entrantes.
+     * También inicia un hilo que se encarga de manejar las conexiones entrantes y crea un objeto
+     * Instancia la clase HiloCliente para cada cliente que se conecte aceptada.
+     */
+    public void inicio() {
         try {
 
             serverSocket = new ServerSocket(12345);

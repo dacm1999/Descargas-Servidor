@@ -1,28 +1,23 @@
 package tasks;
 
 import gui.VistaCliente;
-
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.ObjectOutputStream;
 import java.util.List;
 
 public class WorkerSubida extends SwingWorker<Void, Integer> {
-
     private ObjectOutputStream salida;
     private FileInputStream entradaFichero;
     private VistaCliente vista;
     private long tamanoFichero;
     private File fichero;
-    private boolean transfiriendo;
 
     public WorkerSubida(ObjectOutputStream salida, VistaCliente vista, File fichero) {
         this.salida = salida;
         this.vista = vista;
         this.fichero = fichero;
-        //this.transfiriendo = transfiriendo;
     }
 
     @Override
@@ -39,8 +34,6 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
         salida.writeObject(fichero.getName());
         System.out.println("Tamaño del fichero a enviar " + tamanoFichero + " NOMBRE " + fichero.getName());
         salida.flush();
-
-//        System.out.println("NOMBRE DEL FICHERO " + fichero.getName() + " tamaño del fichero " + tamanoFichero);
 
         //LEO LOS FICHEROS QUE ME ENVIA EL SERVIDOR
         entradaFichero = new FileInputStream(fichero);
@@ -73,6 +66,5 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
 
     protected void done() {
         this.vista.lblEstado.setText("Se ha transferido el fichero " + fichero.getName());
-        this.vista.lblEstado.setBackground(Color.GREEN);
     }
 }

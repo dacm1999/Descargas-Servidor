@@ -1,28 +1,21 @@
 package tasks;
 
-import controlador.ControladorServidor;
 import gui.VistaServidor;
-
 import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class HiloCliente extends Thread {
-
-
     private Socket socketCliente;
     private List<String> listaDescargas;
     private VistaServidor vista;
-
     private ObjectOutputStream salida;
     private ObjectInputStream entrada;
-    private ControladorServidor controladorServidor;
     private int seleccion;
-    private boolean estadoDescarga;
     private File file;
+
 
     /**
      * Constructor de la clase HiloCliente
@@ -39,7 +32,9 @@ public class HiloCliente extends Thread {
     }
 
     /**
-     *
+     * El método establece flujos de entrada y salida para comunicarse con un cliente a través de un socket.
+     * Luego llama a los métodos "opciones" y "refrescarDescargas" para manejar las solicitudes del cliente
+     * y actualizar la vista de la lista de descargas en la interfaz gráfica de usuario.
      */
     @Override
     public void run() {
@@ -63,6 +58,9 @@ public class HiloCliente extends Thread {
         }
     }
 
+    /**
+     * Gestiona cada accion que realiza el cliente
+     */
     private void opciones() {
         while (!socketCliente.isClosed()) { // Verifica si la conexión sigue abierta
             try {
@@ -91,7 +89,7 @@ public class HiloCliente extends Thread {
                         }
                     }
                 }
-            } catch (EOFException e) { // Captura específicamente la excepción EOFException
+            } catch (EOFException e) {
                 System.out.println("Se ha cerrado la conexión del servidor");
                 break;
             } catch (IOException e) {
@@ -99,7 +97,6 @@ public class HiloCliente extends Thread {
             }
         }
     }
-
 
     /**
      * Envio la lista de ficheros
@@ -113,6 +110,10 @@ public class HiloCliente extends Thread {
         }
     }
 
+    /**
+     * Método que recibe y guarda un archivo enviado a través de un
+     * flujo de entrada de datos, especificando su nombre y tamaño.
+     */
     private void ficheroSubido() {
 
         try {
@@ -150,7 +151,8 @@ public class HiloCliente extends Thread {
     }
 
     /**
-     *
+     * Este es un método privado llamado "descargas" que lee un archivo desde un flujo de entrada,
+     * envía su tamaño a un flujo de salida, y envía el contenido del fichero.
      */
     private void descargas() {
         try {
@@ -179,7 +181,7 @@ public class HiloCliente extends Thread {
             } while (!socketCliente.isClosed());
             salida.close();
             entrada.close();
-        }catch (OptionalDataException ex){
+        } catch (OptionalDataException ex) {
             System.out.println("ERROR" + ex.getMessage());
         } catch (SocketException ex) {
             System.out.println("CLIENTE DESCONECTADO " + socketCliente.getInetAddress().getHostAddress());
@@ -194,9 +196,10 @@ public class HiloCliente extends Thread {
         }
     }
 
-
     /**
-     * Muestra los ficheros en la GUI
+     * Método que actualiza la vista de la lista de descargas en la interfaz gráfica de usuario
+     * Utiliza "SwingUtilities.invokeLater" para ejecutar el código en el Event Dispatch Thread (EDT) de Swing para poder
+     * actualizar las componentes de forma segura.
      */
     private void refrescarDescargas() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -220,6 +223,4 @@ public class HiloCliente extends Thread {
             }
         });
     }
-
-
 }

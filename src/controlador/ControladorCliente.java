@@ -38,14 +38,13 @@ public class ControladorCliente implements ActionListener {
 //        vistaCliente.listaGUI.setModel(modelo);
     }
 
-    private void vincularListener(ActionListener listener) {
 
+    private void vincularListener(ActionListener listener) {
         vistaCliente.btnDescargarFichero.addActionListener(listener);
         vistaCliente.btnConectar.addActionListener(listener);
         vistaCliente.btnRefrescar.addActionListener(listener);
         vistaCliente.btnSubirFichero.addActionListener(listener);
     }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         String comando = e.getActionCommand();
@@ -59,11 +58,12 @@ public class ControladorCliente implements ActionListener {
                     @Override
                     public void run() {
                         try {
-                                opcion = 1;
-                                salida.writeInt(opcion);
-                                descargar();
+                            opcion = 1;
+                            salida.writeInt(opcion);
+                            descargar();
                         } catch (IOException ex) {
                             JOptionPane.showMessageDialog(null, "Conexion perdida", "Error de conexion", JOptionPane.ERROR_MESSAGE);
+                            System.exit(0);
                         }
                     }
                 });
@@ -74,7 +74,6 @@ public class ControladorCliente implements ActionListener {
                 Thread hilo = new Thread(new Runnable() {
                     @Override
                     public void run() {
-
                         try {
                             opcion = 0;
                             salida.writeInt(opcion);
@@ -110,6 +109,11 @@ public class ControladorCliente implements ActionListener {
         }
     }
 
+    /**
+     * Descarga el fichero seleccionado en la vista del cliente.
+     * Si no hay ningún fichero seleccionado, muestra un mensaje de error.
+     * Crea una instancia de la clase WorkerDescarga y la ejecuta.
+     */
     private void descargar() {
         if (vistaCliente.listaGUI.isSelectionEmpty()) {
             JOptionPane.showMessageDialog(null, "Seleccione un fichero.", "Error de descarga", JOptionPane.ERROR_MESSAGE);
@@ -123,6 +127,9 @@ public class ControladorCliente implements ActionListener {
         }
     }
 
+    /**
+     * Abre un diálogo de selección de archivo y envía el archivo seleccionado al servidor mediante un WorkerSubida.
+     */
     private void subirFichero() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Selecciona el archivo a subir");
@@ -134,10 +141,15 @@ public class ControladorCliente implements ActionListener {
         }
     }
 
+    /**
+     * Método encargado de actualizar la lista de ficheros en la vista del cliente.
+     * Recibe una lista de nombres de ficheros y actualiza el modelo del JList con ellos.
+     *
+     * @param lista la lista de nombres de ficheros a mostrar en la vista
+     */
     private void listaFicheros(List<String> lista) {
         SwingUtilities.invokeLater(() -> {
-            System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread());
-
+//            System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread());
             try {
                 DefaultListModel modelo = new DefaultListModel<>();
                 for (String fichero : lista) {
@@ -154,6 +166,10 @@ public class ControladorCliente implements ActionListener {
         });
     }
 
+    /**
+     * Inicia la conexión con el servidor a través del socket.
+     * Luego habilita los botones una vez establecida la conexion con el socket.
+     */
     public void conectar() {
         try {
             String ip = vistaCliente.txfIp.getText();
@@ -166,7 +182,6 @@ public class ControladorCliente implements ActionListener {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
-
                     vistaCliente.btnSubirFichero.setEnabled(true);
                     vistaCliente.btnConectar.setText("Conectado");
                     vistaCliente.btnDescargarFichero.setEnabled(true);
@@ -178,7 +193,7 @@ public class ControladorCliente implements ActionListener {
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            JOptionPane.showMessageDialog(null, "Imposible establecer conexión.", "Error de conexion", JOptionPane.ERROR_MESSAGE);
         }
 
     }

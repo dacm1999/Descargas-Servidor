@@ -8,6 +8,10 @@ import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * @author danie
+ * @version 1.0
+ */
 public class VistaServidor {
     public JButton btnIniciar;
     public JTextArea txtClientes;
@@ -23,16 +27,17 @@ public class VistaServidor {
         JFrame frame = new JFrame("Servidor");
         frame.setContentPane(pnlPrincipal);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //Definir tamano inicial
         frame.setSize(new Dimension(450,450));
-        //centrar ventana inicial
+        frame.setResizable(false);
         frame.setLocationRelativeTo(null);
-//        modelo = new DefaultListModel();
-//        lista.setModel(modelo);
         listaGUI.setEnabled(false);
-
         frame.setVisible(true);
     }
+
+    /**
+     * Inicia el programa servidor
+     * @param args
+     */
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(new FlatIntelliJLaf());
@@ -41,5 +46,4 @@ public class VistaServidor {
         }
         new ControladorServidor(new VistaServidor());
     }
-
 }

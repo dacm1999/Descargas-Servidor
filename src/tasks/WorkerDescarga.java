@@ -1,20 +1,13 @@
 package tasks;
 
 import gui.VistaCliente;
-
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
 
-import static java.lang.Thread.sleep;
-import static javax.xml.ws.Endpoint.publish;
-
 public class WorkerDescarga extends SwingWorker<Void, Integer> {
-
-    private Socket socket;
-    private boolean pausado;
     private long fileSize;
     private ObjectInputStream entrada;
     private ObjectOutputStream salida;
@@ -73,7 +66,6 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
                 int progreso = (int) (totalLeido * 100 / fileSize);
                 publish(progreso);
             }
-
             System.out.println("Fichero escrito " + nombreFichero + " tamaño: " + totalLeido);
             escritorFichero.close();
         } catch (EOFException e) {
@@ -85,7 +77,6 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
-
         return null;
     }
 }
