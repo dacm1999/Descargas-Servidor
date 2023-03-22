@@ -50,7 +50,14 @@ public class ControladorCliente implements ActionListener {
         String comando = e.getActionCommand();
         switch (comando) {
             case "Conectar": {
-                conectar();
+                Thread hilo = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        conectar();
+
+                    }
+                });
+                hilo.start();
                 break;
             }
             case "Descargar": {
@@ -116,9 +123,11 @@ public class ControladorCliente implements ActionListener {
      */
     private void descargar() {
         if (vistaCliente.listaGUI.isSelectionEmpty()) {
+            System.out.println(SwingUtilities.isEventDispatchThread());
             JOptionPane.showMessageDialog(null, "Seleccione un fichero.", "Error de descarga", JOptionPane.ERROR_MESSAGE);
         } else {
             ficheroSeleccionado = (String) vistaCliente.listaGUI.getSelectedValue();
+            System.out.println(SwingUtilities.isEventDispatchThread());
             fichero = new File(ficheroSeleccionado);
             System.out.println("Fichero seleccionado " + ficheroSeleccionado + " " + getClass());
             WorkerDescarga descarga = new WorkerDescarga(entrada, salida, vistaCliente, ficheroSeleccionado, fichero);

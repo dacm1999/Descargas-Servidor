@@ -64,6 +64,7 @@ public class ControladorServidor implements ActionListener {
 
             serverSocket = new ServerSocket(12345);
 //            listaDescargas = (List<String>) vistaServidor.lista;
+
             vistaServidor.btnIniciar.setText("Servidor Iniciado");
             System.out.println("SERVIDOR INICIADO");
             estado = true;
@@ -79,10 +80,10 @@ public class ControladorServidor implements ActionListener {
                                     vistaServidor.txtClientes.append(cliente.getInetAddress().getHostAddress() + " conectado\n");
                                     System.out.println("Cliente conectado: " + cliente.getInetAddress());
 
-                                    HiloCliente cliente1 = new HiloCliente(cliente,listaDescargas,vistaServidor);
-                                    cliente1.start();
                                 }
                             });
+                            HiloCliente cliente1 = new HiloCliente(cliente,listaDescargas,vistaServidor);
+                            cliente1.start();
                         } catch (IOException e) {
                             System.out.println("ERROR: " + e.getMessage());
                         }
