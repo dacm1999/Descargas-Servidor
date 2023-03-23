@@ -15,6 +15,8 @@ public class HiloCliente extends Thread {
     private ObjectInputStream entrada;
     private int seleccion;
     private File file;
+    private int contadorClientes;
+    private String nombreCliente;
 
 
     /**
@@ -42,9 +44,6 @@ public class HiloCliente extends Thread {
             do {
                 this.salida = new ObjectOutputStream(this.socketCliente.getOutputStream());
                 this.entrada = new ObjectInputStream(this.socketCliente.getInputStream());
-
-                // Agrega el nombre del cliente a la lista de clientes y actualiza la vista
-                String ip = String.valueOf(this.socketCliente.getInetAddress());
 
                 // Maneja las solicitudes del cliente
                 opciones();
@@ -109,6 +108,16 @@ public class HiloCliente extends Thread {
             throw new RuntimeException(e);
         }
     }
+    private void enviarNombreCliente() {
+        contadorClientes++;
+        nombreCliente = "Cliente " + contadorClientes;
+        try {
+            salida.writeObject(nombreCliente);
+            salida.reset();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     /**
      * Método que recibe y guarda un archivo enviado a través de un
@@ -154,6 +163,7 @@ public class HiloCliente extends Thread {
      * Este es un método privado llamado "descargas" que lee un archivo desde un flujo de entrada,
      * envía su tamaño a un flujo de salida, y envía el contenido del fichero.
      */
+
     private void descargas() {
         try {
             do {
