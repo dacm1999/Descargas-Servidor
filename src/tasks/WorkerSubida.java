@@ -39,7 +39,7 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
     }
 
     protected void done() {
-        vista.lblEstado.setText("Se ha transferido el fichero " + fichero.getName());
+        vista.lblEstado.setText("Estado: Se ha transferido el fichero " + fichero.getName());
     }
 
     @Override

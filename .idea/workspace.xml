@@ -11,8 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="8f8c362d-1a02-4679-b959-2ee8a735e088" name="Changes" comment="Practica Cliente-Servidor">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/WorkerSubida.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/WorkerSubida.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +52,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Project",
+    "project.structure.last.edited": "Artifacts",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "preferences.lookFeel",
@@ -118,7 +117,7 @@
       <workItem from="1679437450876" duration="366000" />
       <workItem from="1679477988402" duration="1922000" />
       <workItem from="1679480385825" duration="24361000" />
-      <workItem from="1679700240964" duration="6075000" />
+      <workItem from="1679700240964" duration="6424000" />
     </task>
     <task id="LOCAL-00001" summary="PruebaGIT">
       <created>1678884371052</created>
@@ -225,7 +224,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679757759450</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Practica Cliente-Servidor">
+      <created>1679760610262</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1679760610262</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
