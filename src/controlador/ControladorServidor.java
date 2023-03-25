@@ -30,7 +30,6 @@ public class ControladorServidor implements ActionListener {
 
     /**
      * Constructor de la clase ControladorServidor
-     *
      * @param vistaServidor
      */
     public ControladorServidor(VistaServidor vistaServidor) {
@@ -85,8 +84,7 @@ public class ControladorServidor implements ActionListener {
                                 @Override
                                 public void run() {
                                     vistaServidor.txtClientes.append(cliente.getInetAddress().getHostAddress() + " " + nombreCliente + " conectado\n");
-                                    System.out.println("Cliente conectado: " + cliente.getInetAddress() + " " + nombreCliente);
-
+                                    System.out.println("Cliente conectado: " + cliente.getInetAddress() + " " + nombreCliente + " conectado\n");
                                 }
                             });
                             HiloCliente cliente1 = new HiloCliente(cliente,listaDescargas,vistaServidor);
