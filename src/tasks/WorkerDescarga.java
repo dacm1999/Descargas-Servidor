@@ -44,6 +44,7 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
     @Override
     protected Void doInBackground() throws Exception {
         try {
+            System.out.println("");
             System.out.println("-------------CLASE WORKER DESCARGA-------------");
             salida.writeObject(nombreFichero);
             salida.flush();
@@ -51,6 +52,7 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
 
             System.out.println("Nombre del fichero " + nombreFichero + " tamañado del fichero " + fileSize);
 
+//            System.out.println("Estoy en el EDT: "+SwingUtilities.isEventDispatchThread());
             vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
             vistaCliente.lblEstado.setForeground(Color.black);
 
@@ -67,6 +69,7 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
                 publish(progreso);
             }
             System.out.println("Fichero escrito " + nombreFichero + " tamaño: " + totalLeido);
+            System.out.println("---------------------------" +"\n");
             escritorFichero.close();
         } catch (EOFException e) {
             System.out.println("Cliente desconectado");

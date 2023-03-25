@@ -6,7 +6,10 @@ import tasks.HiloCliente;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -19,22 +22,24 @@ public class ControladorServidor implements ActionListener {
     private Socket cliente;
     private boolean estado;
     public DefaultListModel modelo;
-    private List <String> listaDescargas;
+    private List<String> listaDescargas;
+    private ObjectOutputStream salida;
+    private ObjectInputStream entrada;
+    private int contadorClientes;
+    private String nombreCliente;
 
     /**
      * Constructor de la clase ControladorServidor
+     *
      * @param vistaServidor
      */
     public ControladorServidor(VistaServidor vistaServidor) {
         this.vistaServidor = vistaServidor;
         vincularListeners(this);
 
+        nombreCliente = "";
         listaDescargas = new ArrayList();
         estado = true;
-//
-//        modelo = new DefaultListModel();
-//        vistaServidor.listaGUI.setModel(modelo);
-//        listaDescargas = vistaServidor.listaGUI.getSelectedValuesList();
     }
 
 
@@ -61,10 +66,7 @@ public class ControladorServidor implements ActionListener {
      */
     public void inicio() {
         try {
-
             serverSocket = new ServerSocket(12345);
-//            listaDescargas = (List<String>) vistaServidor.lista;
-
             vistaServidor.btnIniciar.setText("Servidor Iniciado");
             System.out.println("SERVIDOR INICIADO");
             estado = true;
@@ -74,11 +76,16 @@ public class ControladorServidor implements ActionListener {
                     while (estado) {
                         try {
                             cliente = serverSocket.accept();
+                            contadorClientes++;
+                            nombreCliente =  "Cliente " + contadorClientes;
+//                            salida = new ObjectOutputStream(cliente.getOutputStream());
+//                            salida.writeUTF(nombreCliente);
+//                            salida.flush();
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    vistaServidor.txtClientes.append(cliente.getInetAddress().getHostAddress() + " conectado\n");
-                                    System.out.println("Cliente conectado: " + cliente.getInetAddress());
+                                    vistaServidor.txtClientes.append(cliente.getInetAddress().getHostAddress() + " " + nombreCliente + " conectado\n");
+                                    System.out.println("Cliente conectado: " + cliente.getInetAddress() + " " + nombreCliente);
 
                                 }
                             });

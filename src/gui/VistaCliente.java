@@ -18,8 +18,8 @@ public class VistaCliente {
     public JTextField txfIp;
     public JLabel lblEstado;
     public JList listaGUI;
+    public JTextField txfCliente;
     private JPanel pnlPrincipal;
-    private JTextField txfCliente;
     private JLabel lbl1;
     public JProgressBar barraProgreso;
 

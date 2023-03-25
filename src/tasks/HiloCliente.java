@@ -29,8 +29,10 @@ public class HiloCliente extends Thread {
     public HiloCliente(Socket socketCliente, List<String> listaDescargas, VistaServidor vista) {
         this.socketCliente = socketCliente;
         this.listaDescargas = listaDescargas;
+        this.nombreCliente = nombreCliente;
         this.vista = vista;
         seleccion = 0;
+        file = null;
     }
 
     /**
@@ -83,7 +85,6 @@ public class HiloCliente extends Thread {
                             break;
                         }
                         case 3: {
-
                             break;
                         }
                     }
@@ -108,23 +109,12 @@ public class HiloCliente extends Thread {
             throw new RuntimeException(e);
         }
     }
-    private void enviarNombreCliente() {
-        contadorClientes++;
-        nombreCliente = "Cliente " + contadorClientes;
-        try {
-            salida.writeObject(nombreCliente);
-            salida.reset();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Método que recibe y guarda un archivo enviado a través de un
      * flujo de entrada de datos, especificando su nombre y tamaño.
      */
     private void ficheroSubido() {
-
         try {
             long tamanoFichero = this.entrada.readLong();
             String nombreFichero = (String) this.entrada.readObject();
@@ -146,6 +136,7 @@ public class HiloCliente extends Thread {
                 ficheroSalida.close();
                 listaDescargas.add(nombreFichero);
 
+                System.out.println();
                 for (String nombre : listaDescargas) {
                     System.out.println("ficheros agregados: " + nombre);
                 }
@@ -186,7 +177,7 @@ public class HiloCliente extends Thread {
                     salida.flush();
                     totalEscrito += bytesLeidos;
                 }
-                System.out.println("Nombre del fichero " + nombreFichero + " BYTES ESCRITOS " + totalEscrito);
+                System.out.println("Nombre del fichero " + nombreFichero + " BYTES ESCRITOS " + totalEscrito + "\n");
                 fileInputStream.close();
             } while (!socketCliente.isClosed());
             salida.close();
@@ -203,6 +194,7 @@ public class HiloCliente extends Thread {
         } catch (ClassNotFoundException e) {
             System.out.println("Clase no encontrada");
         } catch (Exception e) {
+            System.out.println("ERROR" + e);
         }
     }
 
@@ -215,8 +207,7 @@ public class HiloCliente extends Thread {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread());
-
+                System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread() + " " + getClass());
                 try {
                     DefaultListModel modelo = new DefaultListModel<>();
                     for (String descarga : listaDescargas) {
@@ -227,6 +218,7 @@ public class HiloCliente extends Thread {
                     System.out.println("ERROR: " + ex.getMessage());
                     throw new RuntimeException(ex);
                 } finally {
+                    System.out.println();
                     System.out.println("Ficheros subidos: ");
                     listaDescargas.forEach(System.out::println);
                 }

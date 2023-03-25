@@ -22,11 +22,6 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
 
     @Override
     protected Void doInBackground() throws Exception {
-        //envio el boton que he pulsado
-//        int seleccion = 3;
-//        salida.writeInt(seleccion);
-
-
         System.out.println("-------------CLASE WORKER ENVIO-------------");
         //Envio el fichero
         tamanoFichero = fichero.length();
@@ -60,7 +55,6 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
             int valor = valores.get(valores.size() - 1);
             vista.barraProgreso.setValue(valor);
             vista.barraProgreso.setString(valor + "%");
-//            vista.barraProgreso.setValue((Integer) valores.get(valores.size() - 1));
         }
     }
 

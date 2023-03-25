@@ -26,6 +26,8 @@ public class ControladorCliente implements ActionListener {
     private String ficheroSeleccionado;
     private File fichero;
     private int opcion;
+    private String nombreCliente;
+    private String seleccion;
 
 
     public ControladorCliente(VistaCliente vistaCliente) {
@@ -34,8 +36,7 @@ public class ControladorCliente implements ActionListener {
 
         listaDescargas = new ArrayList<>();
         ficheroSeleccionado = "";
-//        modelo = new DefaultListModel();
-//        vistaCliente.listaGUI.setModel(modelo);
+        nombreCliente = "";
     }
 
 
@@ -45,16 +46,19 @@ public class ControladorCliente implements ActionListener {
         vistaCliente.btnRefrescar.addActionListener(listener);
         vistaCliente.btnSubirFichero.addActionListener(listener);
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         String comando = e.getActionCommand();
         switch (comando) {
             case "Conectar": {
+                System.out.println("ESTOY EN EL EDT " + SwingUtilities.isEventDispatchThread() + " " + getClass());
+                String ip = vistaCliente.txfIp.getText();
+                int port = 12345;
                 Thread hilo = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        conectar();
-
+                        conectar(ip, port);
                     }
                 });
                 hilo.start();
@@ -64,14 +68,24 @@ public class ControladorCliente implements ActionListener {
                 Thread hilo = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        try {
-                            opcion = 1;
-                            salida.writeInt(opcion);
-                            descargar();
-                        } catch (IOException ex) {
-                            JOptionPane.showMessageDialog(null, "Conexion perdida", "Error de conexion", JOptionPane.ERROR_MESSAGE);
-                            System.exit(0);
-                        }
+                        SwingUtilities.invokeLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (vistaCliente.listaGUI.isSelectionEmpty()) {
+                                    JOptionPane.showMessageDialog(null, "Seleccione un fichero.", "Error de descarga", JOptionPane.ERROR_MESSAGE);
+                                } else {
+                                    try {
+                                        ficheroSeleccionado = (String) vistaCliente.listaGUI.getSelectedValue();
+                                        opcion = 1;
+                                        salida.writeInt(opcion);
+                                        descargar(ficheroSeleccionado);
+                                    } catch (IOException ex) {
+                                        JOptionPane.showMessageDialog(null, "Conexion perdida", "Error de conexion", JOptionPane.ERROR_MESSAGE);
+                                        System.exit(0);
+                                    }
+                                }
+                            }
+                        });
                     }
                 });
                 hilo.start();
@@ -86,7 +100,6 @@ public class ControladorCliente implements ActionListener {
                             salida.writeInt(opcion);
                             salida.flush();
                             listaDes = (List<String>) entrada.readObject();
-
                             listaFicheros(listaDes);
 
                             for (String fichero : listaDes) {
@@ -95,8 +108,11 @@ public class ControladorCliente implements ActionListener {
                         } catch (IOException ex) {
                             JOptionPane.showMessageDialog(null, "Conexion perdida", "Error de conexion", JOptionPane.ERROR_MESSAGE);
                             System.exit(0);
+//                            throw  new RuntimeException(ex);
                         } catch (ClassNotFoundException ex) {
                             throw new RuntimeException(ex);
+                        } finally {
+
                         }
                     }
                 });
@@ -121,20 +137,14 @@ public class ControladorCliente implements ActionListener {
      * Si no hay ningún fichero seleccionado, muestra un mensaje de error.
      * Crea una instancia de la clase WorkerDescarga y la ejecuta.
      */
-    private void descargar() {
-        if (vistaCliente.listaGUI.isSelectionEmpty()) {
-            System.out.println(SwingUtilities.isEventDispatchThread());
-            JOptionPane.showMessageDialog(null, "Seleccione un fichero.", "Error de descarga", JOptionPane.ERROR_MESSAGE);
-        } else {
-            ficheroSeleccionado = (String) vistaCliente.listaGUI.getSelectedValue();
-            System.out.println(SwingUtilities.isEventDispatchThread());
-            fichero = new File(ficheroSeleccionado);
-            System.out.println("Fichero seleccionado " + ficheroSeleccionado + " " + getClass());
-            WorkerDescarga descarga = new WorkerDescarga(entrada, salida, vistaCliente, ficheroSeleccionado, fichero);
-            descarga.execute();
-
-        }
+    private void descargar(String seleccion) {
+        seleccion = (String) vistaCliente.listaGUI.getSelectedValue();
+        fichero = new File(seleccion);
+        System.out.println("Fichero seleccionado " + seleccion + " " + getClass());
+        WorkerDescarga descarga = new WorkerDescarga(entrada, salida, vistaCliente, seleccion, fichero);
+        descarga.execute();
     }
+
 
     /**
      * Abre un diálogo de selección de archivo y envía el archivo seleccionado al servidor mediante un WorkerSubida.
@@ -157,20 +167,23 @@ public class ControladorCliente implements ActionListener {
      * @param lista la lista de nombres de ficheros a mostrar en la vista
      */
     private void listaFicheros(List<String> lista) {
-        SwingUtilities.invokeLater(() -> {
-//            System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread());
-            try {
-                DefaultListModel modelo = new DefaultListModel<>();
-                for (String fichero : lista) {
-                    modelo.addElement(fichero);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("Estoy en el EDT: " + SwingUtilities.isEventDispatchThread() + " " + getClass());
+                try {
+                    DefaultListModel modelo = new DefaultListModel<>();
+                    for (String fichero : lista) {
+                        modelo.addElement(fichero);
+                    }
+                    vistaCliente.listaGUI.setModel(modelo);
+                } catch (NullPointerException ex) {
+                    System.out.println("ERROR: " + ex.getMessage());
+                    throw new RuntimeException(ex);
+                } finally {
+                    System.out.println("Ficheros subidos: ");
+                    lista.forEach(System.out::println);
                 }
-                vistaCliente.listaGUI.setModel(modelo);
-            } catch (NullPointerException ex) {
-                System.out.println("ERROR: " + ex.getMessage());
-                throw new RuntimeException(ex);
-            } finally {
-                System.out.println("Ficheros subidos: ");
-                lista.forEach(System.out::println);
             }
         });
     }
@@ -179,15 +192,20 @@ public class ControladorCliente implements ActionListener {
      * Inicia la conexión con el servidor a través del socket.
      * Luego habilita los botones una vez establecida la conexion con el socket.
      */
-    public void conectar() {
+    public void conectar(String ip, int port) {
         try {
-            String ip = vistaCliente.txfIp.getText();
-            int port = 12345;
             cliente = new Socket(ip, port);
             System.out.println("Cliente iniciado " + cliente.getInetAddress());
-            salida = new ObjectOutputStream(cliente.getOutputStream());
             entrada = new ObjectInputStream(cliente.getInputStream());
+            salida = new ObjectOutputStream(cliente.getOutputStream());
             System.out.println("Se ha creado el flujo");
+
+            /*
+            No funciona, automaticmante se cierra la conexion al leer el id
+             */
+//            String nombreCliente = entrada.readUTF();
+//            System.out.println(nombreCliente);
+//            asignarNombreCliente(nombreCliente);
             SwingUtilities.invokeLater(new Runnable() {
                 @Override
                 public void run() {
@@ -204,6 +222,20 @@ public class ControladorCliente implements ActionListener {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Imposible establecer conexión.", "Error de conexion", JOptionPane.ERROR_MESSAGE);
         }
+    }
 
+    /**
+     * Asigna un ID a cada cliente que se conecte
+     *
+     * @param nombre, ID DEL CLIENTE
+     */
+    private void asignarNombreCliente(String nombre) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                vistaCliente.txfCliente.setText(nombre);
+                System.out.println("Estoy en el EDT " + SwingUtilities.isEventDispatchThread());
+            }
+        });
     }
 }
