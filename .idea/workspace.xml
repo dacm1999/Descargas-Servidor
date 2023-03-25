@@ -46,7 +46,7 @@
     "UI_DESIGNER_EDITOR_MODE.PaletteManager.SHOW": "true",
     "UI_DESIGNER_EDITOR_MODE.UIDesignerToolWindowManager.WIDTH": "279",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/danie/Documents/PROGRAMACIÓN DE SERVICIOS Y PROCESOS/WORKSPACE - PSP/Practica Cliente-Servidor - RECUPERACION",
+    "last_opened_file_path": "C:/Users/danie/Documents/PROGRAMACIÓN DE SERVICIOS Y PROCESOS/WORKSPACE - PSP/GestorDescargas2",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -117,7 +117,7 @@
       <workItem from="1679437450876" duration="366000" />
       <workItem from="1679477988402" duration="1922000" />
       <workItem from="1679480385825" duration="24361000" />
-      <workItem from="1679700240964" duration="6424000" />
+      <workItem from="1679700240964" duration="8905000" />
     </task>
     <task id="LOCAL-00001" summary="PruebaGIT">
       <created>1678884371052</created>
@@ -231,7 +231,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679760610262</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Practica Cliente-Servidor">
+      <created>1679761173223</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1679761173223</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
