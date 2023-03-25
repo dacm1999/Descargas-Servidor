@@ -20,6 +20,28 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
         this.fichero = fichero;
     }
 
+    private void progresoSubida(){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                vista.lblEstado.setText("Estado: subiendo fichero");
+            }
+        });
+    }
+
+    @Override
+    protected void process(List<Integer> valores) {
+        if(!valores.isEmpty()) {
+            int valor = valores.get(valores.size() - 1);
+            vista.barraProgreso.setValue(valor);
+            vista.barraProgreso.setString(valor + "%");
+        }
+    }
+
+    protected void done() {
+        vista.lblEstado.setText("Se ha transferido el fichero " + fichero.getName());
+    }
+
     @Override
     protected Void doInBackground() throws Exception {
         System.out.println("-------------CLASE WORKER ENVIO-------------");
@@ -33,6 +55,7 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
         //LEO LOS FICHEROS QUE ME ENVIA EL SERVIDOR
         entradaFichero = new FileInputStream(fichero);
 
+        progresoSubida();
         byte[] buffer = new byte[1024];
         int bytesLeidos;
         long totalBytesLeidos = 0L;
@@ -47,18 +70,5 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
         System.out.println("NOMBRE DEL FICHERO: " + fichero.getName() + " -- tamaño del fichero: " + tamanoFichero);
         entradaFichero.close();
         return null;
-    }
-
-    @Override
-    protected void process(List<Integer> valores) {
-        if(!valores.isEmpty()) {
-            int valor = valores.get(valores.size() - 1);
-            vista.barraProgreso.setValue(valor);
-            vista.barraProgreso.setString(valor + "%");
-        }
-    }
-
-    protected void done() {
-        this.vista.lblEstado.setText("Se ha transferido el fichero " + fichero.getName());
     }
 }

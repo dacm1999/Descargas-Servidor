@@ -11,10 +11,8 @@
   <component name="ChangeListManager">
     <list default="true" id="8f8c362d-1a02-4679-b959-2ee8a735e088" name="Changes" comment="Practica Cliente-Servidor">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/controlador/ControladorServidor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controlador/ControladorServidor.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gui/VistaCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/VistaCliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gui/VistaServidor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/VistaServidor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/WorkerSubida.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/WorkerSubida.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +53,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Artifacts",
+    "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
     "settings.editor.selected.configurable": "preferences.lookFeel",
@@ -120,7 +118,7 @@
       <workItem from="1679437450876" duration="366000" />
       <workItem from="1679477988402" duration="1922000" />
       <workItem from="1679480385825" duration="24361000" />
-      <workItem from="1679700240964" duration="4257000" />
+      <workItem from="1679700240964" duration="6075000" />
     </task>
     <task id="LOCAL-00001" summary="PruebaGIT">
       <created>1678884371052</created>
@@ -220,7 +218,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679757007430</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Practica Cliente-Servidor">
+      <created>1679757759450</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1679757759450</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

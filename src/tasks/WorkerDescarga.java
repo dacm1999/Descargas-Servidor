@@ -25,10 +25,14 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
         estadoDescarga = false;
     }
 
-    @Override
-    protected void done() {
-        vistaCliente.barraProgreso.setValue(100);
-        vistaCliente.lblEstado.setText("Estado: Descarga finalizada");
+    private void descargaProgreso(){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
+                vistaCliente.lblEstado.setForeground(Color.black);
+            }
+        });
     }
 
     @Override
@@ -37,27 +41,37 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
             int valor = valores.get(valores.size() - 1);
             vistaCliente.barraProgreso.setValue(valor);
             vistaCliente.barraProgreso.setString(valor + "%");
-//            vistaCliente.barraProgreso.setValue((Integer) valores.get(valores.size() - 1));
         }
+    }
+
+    @Override
+    protected void done() {
+        vistaCliente.barraProgreso.setValue(100);
+        vistaCliente.lblEstado.setText("Estado: Descarga finalizada");
     }
 
     @Override
     protected Void doInBackground() throws Exception {
         try {
-            System.out.println("");
             System.out.println("-------------CLASE WORKER DESCARGA-------------");
             salida.writeObject(nombreFichero);
             salida.flush();
             fileSize = (long) entrada.readObject();
 
             System.out.println("Nombre del fichero " + nombreFichero + " tamañado del fichero " + fileSize);
-
-//            System.out.println("Estoy en el EDT: "+SwingUtilities.isEventDispatchThread());
-            vistaCliente.lblEstado.setText("Estado: Descarga en proceso");
-            vistaCliente.lblEstado.setForeground(Color.black);
+            descargaProgreso();
 
             //LEO el fichero que me envia HiloCliente
-            FileOutputStream escritorFichero = new FileOutputStream("copy_" + file);
+            String nombreArchivo = "copy_" + nombreFichero;
+            int numArchivo = 1;
+            //compruebo si ya existe el fichero
+            File archivo = new File(nombreArchivo);
+            while (archivo.exists()) {
+                nombreArchivo = "copy_" + numArchivo + "_" + nombreFichero;
+                archivo = new File(nombreArchivo);
+                numArchivo++;
+            }
+            FileOutputStream escritorFichero = new FileOutputStream(nombreArchivo);
             byte[] buffer = new byte[1024];
             long totalLeido = 0;
             int bytesLeidos;
