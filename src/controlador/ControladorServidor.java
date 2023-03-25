@@ -66,7 +66,7 @@ public class ControladorServidor implements ActionListener {
     public void inicio() {
         try {
             serverSocket = new ServerSocket(12345);
-            vistaServidor.btnIniciar.setText("Servidor Iniciado");
+            deshabilitarBoton();
             System.out.println("SERVIDOR INICIADO");
             estado = true;
             Thread hilo = new Thread(new Runnable() {
@@ -99,5 +99,15 @@ public class ControladorServidor implements ActionListener {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void deshabilitarBoton(){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                vistaServidor.btnIniciar.setText("Servidor Iniciado");
+                vistaServidor.btnIniciar.setEnabled(false);
+            }
+        });
     }
 }

@@ -206,17 +206,8 @@ public class ControladorCliente implements ActionListener {
 //            String nombreCliente = entrada.readUTF();
 //            System.out.println(nombreCliente);
 //            asignarNombreCliente(nombreCliente);
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    vistaCliente.btnSubirFichero.setEnabled(true);
-                    vistaCliente.btnConectar.setText("Conectado");
-                    vistaCliente.btnDescargarFichero.setEnabled(true);
-                    vistaCliente.btnRefrescar.setEnabled(true);
-                    vistaCliente.btnConectar.setEnabled(false);
+            habilitarBotones();
 
-                }
-            });
         } catch (UnknownHostException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
@@ -226,7 +217,6 @@ public class ControladorCliente implements ActionListener {
 
     /**
      * Asigna un ID a cada cliente que se conecte
-     *
      * @param nombre, ID DEL CLIENTE
      */
     private void asignarNombreCliente(String nombre) {
@@ -235,6 +225,23 @@ public class ControladorCliente implements ActionListener {
             public void run() {
                 vistaCliente.txfCliente.setText(nombre);
                 System.out.println("Estoy en el EDT " + SwingUtilities.isEventDispatchThread());
+            }
+        });
+    }
+
+    /**
+     * Método privado que habilita varios botones de la interfaz de usuario de la vista del cliente.
+     * Este método utiliza la clase SwingUtilities para evitar bloquear la interfaz de usuario principal.
+     */
+    private void habilitarBotones(){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                vistaCliente.btnSubirFichero.setEnabled(true);
+                vistaCliente.btnConectar.setText("Conectado");
+                vistaCliente.btnDescargarFichero.setEnabled(true);
+                vistaCliente.btnRefrescar.setEnabled(true);
+                vistaCliente.btnConectar.setEnabled(false);
             }
         });
     }

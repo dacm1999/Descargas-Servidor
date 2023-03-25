@@ -27,7 +27,7 @@ public class VistaCliente {
         JFrame frame = new JFrame("Cliente");
         frame.setContentPane(pnlPrincipal);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(550, 450);
+        frame.setSize(550, 500);
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);

@@ -27,7 +27,7 @@ public class VistaServidor {
         JFrame frame = new JFrame("Servidor");
         frame.setContentPane(pnlPrincipal);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(new Dimension(450,450));
+        frame.setSize(new Dimension(450,500));
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         listaGUI.setEnabled(false);
