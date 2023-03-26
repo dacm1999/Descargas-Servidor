@@ -7,6 +7,8 @@ import tasks.WorkerSubida;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -27,7 +29,9 @@ public class ControladorCliente implements ActionListener {
     private File fichero;
     private int opcion;
     private String nombreCliente;
-    private String seleccion;
+    private boolean esDescarga;
+    private WorkerDescarga descarga;
+    private WorkerSubida workerEnvio;
 
 
     public ControladorCliente(VistaCliente vistaCliente) {
@@ -37,16 +41,48 @@ public class ControladorCliente implements ActionListener {
         listaDescargas = new ArrayList<>();
         ficheroSeleccionado = "";
         nombreCliente = "";
+        esDescarga = true;
     }
 
-
+    /**
+     * Este método vincula un ActionListener a los botones de la vista del cliente.
+     * Los botones incluidos son btnDescargarFichero, btnConectar, btnRefrescar, btnSubirFichero, btnCancelar y btnPausar.
+     * Cuando se presiona alguno de estos botones, el ActionListener vinculado será activado para ejecutar la acción correspondiente.
+     *
+     * @param listener
+     */
     private void vincularListener(ActionListener listener) {
         vistaCliente.btnDescargarFichero.addActionListener(listener);
         vistaCliente.btnConectar.addActionListener(listener);
         vistaCliente.btnRefrescar.addActionListener(listener);
         vistaCliente.btnSubirFichero.addActionListener(listener);
+
+        vistaCliente.btnCancelar.addActionListener(listener);
+        vistaCliente.btnPausar.addActionListener(listener);
     }
 
+    /**
+     * Este es un método que implementa la interfaz ActionListener y responde a los eventos de acción generados por los componentes de la vista de la aplicación.
+     * El método utiliza un switch-case para ejecutar diferentes acciones en función del comando que se haya recibido. Las acciones que se pueden realizar son:
+     * <p>
+     * Conectar: obtiene la dirección IP del servidor y crea un hilo para establecer una conexión con el servidor en segundo plano.
+     * <p>
+     * Descargar: inicia la descarga de un archivo seleccionado en la lista de archivos disponibles en el servidor.
+     * Si no hay ningún archivo seleccionado, muestra un mensaje de error. Si se produce un error de conexión, muestra un mensaje de error y cierra la aplicación.
+     * <p>
+     * Refrescar Archivos Disponibles: obtiene la lista de archivos disponibles en el servidor y actualiza la lista de archivos en la vista.
+     * <p>
+     * Subir: inicia la subida de un archivo seleccionado en el equipo del usuario al servidor.
+     * <p>
+     * Pausar: pausa la descarga o subida de un archivo en curso, según corresponda.
+     * <p>
+     * Reanudar: reanuda la descarga o subida de un archivo en curso, según corresponda.
+     * <p>
+     * Cancelar: cancela la descarga de un archivo en curso y elimina el archivo descargado del equipo del usuario. (NO FUNCIONA PORQUE CIERRA LA CONEXION, ELIMINA EL ARCHIVO
+     * Y CANCELA LA CONEXION PERO CIERRA LA CONEXION)
+     *
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         String comando = e.getActionCommand();
@@ -64,6 +100,7 @@ public class ControladorCliente implements ActionListener {
                 hilo.start();
                 break;
             }
+
             case "Descargar": {
                 Thread hilo = new Thread(new Runnable() {
                     @Override
@@ -71,19 +108,24 @@ public class ControladorCliente implements ActionListener {
                         SwingUtilities.invokeLater(new Runnable() {
                             @Override
                             public void run() {
+
                                 if (vistaCliente.listaGUI.isSelectionEmpty()) {
                                     JOptionPane.showMessageDialog(null, "Seleccione un fichero.", "Error de descarga", JOptionPane.ERROR_MESSAGE);
                                 } else {
                                     try {
+
                                         ficheroSeleccionado = (String) vistaCliente.listaGUI.getSelectedValue();
                                         opcion = 1;
                                         salida.writeInt(opcion);
+                                        vistaCliente.btnPausar.setEnabled(true);
+//                                        vistaCliente.btnCancelar.setEnabled(true);
                                         descargar(ficheroSeleccionado);
                                     } catch (IOException ex) {
                                         JOptionPane.showMessageDialog(null, "Conexion perdida", "Error de conexion", JOptionPane.ERROR_MESSAGE);
                                         System.exit(0);
                                     }
                                 }
+
                             }
                         });
                     }
@@ -91,6 +133,7 @@ public class ControladorCliente implements ActionListener {
                 hilo.start();
                 break;
             }
+
             case "Refrescar Archivos Disponibles": {
                 Thread hilo = new Thread(new Runnable() {
                     @Override
@@ -119,16 +162,75 @@ public class ControladorCliente implements ActionListener {
                 hilo.start();
                 break;
             }
+
             case "Subir": {
                 try {
                     opcion = 2;
                     salida.writeInt(opcion);
                     subirFichero();
+                    vistaCliente.btnCancelar.setEnabled(false);
+                    vistaCliente.btnPausar.setEnabled(true);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
                 break;
             }
+
+            case "Pausar": {
+                try {
+                    if (descarga != null && workerEnvio == null) {
+                        // pausar descarga
+                        descarga.pausarDescarga(true);
+                    } else if (workerEnvio != null && descarga == null) {
+                        // pausar subida
+                        workerEnvio.pausarSubida(true);
+                    }
+                } catch (NullPointerException ex) {
+                } catch (InterruptedException ex) {
+                } finally {
+                    try {
+                        descarga.pausarDescarga(true);
+                    } catch (InterruptedException ex) {
+
+                    } catch (NullPointerException ex) {
+
+                    }
+                }
+                break;
+            }
+
+            case "Reanudar": {
+                try {
+                    if (descarga != null && workerEnvio == null) {
+                        // reanudar descarga
+                        descarga.pausarDescarga(false);
+                    } else if (workerEnvio != null && descarga == null) {
+                        // reanudar subida
+                        workerEnvio.pausarSubida(false);
+                    }
+                } catch (NullPointerException ex) {
+                } catch (InterruptedException ex) {
+                } finally {
+                    try {
+                        descarga.pausarDescarga(false);
+                    } catch (InterruptedException ex) {
+                    } catch (NullPointerException ex) {
+                    }
+                }
+                break;
+            }
+            case "Cancelar": {
+                descarga.cancel(true);
+                int x = JOptionPane.showConfirmDialog(null, "Desea eliminar el archivo", "Aviso", JOptionPane.YES_NO_OPTION);
+                if (x == JOptionPane.YES_NO_OPTION) {
+                    vistaCliente.lblEstado.setText("Archivo eliminado");
+                    descarga.eliminarArchivo();
+                    descarga.cerrarSocket();
+                }
+
+                break;
+            }
+
         }
     }
 
@@ -141,7 +243,7 @@ public class ControladorCliente implements ActionListener {
         seleccion = (String) vistaCliente.listaGUI.getSelectedValue();
         fichero = new File(seleccion);
         System.out.println("Fichero seleccionado " + seleccion + " " + getClass());
-        WorkerDescarga descarga = new WorkerDescarga(entrada, salida, vistaCliente, seleccion, fichero);
+        descarga = new WorkerDescarga(entrada, salida, vistaCliente, seleccion, fichero, cliente);
         descarga.execute();
     }
 
@@ -155,9 +257,11 @@ public class ControladorCliente implements ActionListener {
         int seleccion = fileChooser.showOpenDialog(null);
         if (seleccion == JFileChooser.APPROVE_OPTION) {
             fichero = fileChooser.getSelectedFile();
-            WorkerSubida workerEnvio = new WorkerSubida(salida, vistaCliente, fichero);
+            workerEnvio = new WorkerSubida(salida, vistaCliente, fichero);
             workerEnvio.execute();
+
         }
+
     }
 
     /**
@@ -196,16 +300,16 @@ public class ControladorCliente implements ActionListener {
         try {
             cliente = new Socket(ip, port);
             System.out.println("Cliente iniciado " + cliente.getInetAddress());
-            entrada = new ObjectInputStream(cliente.getInputStream());
             salida = new ObjectOutputStream(cliente.getOutputStream());
+            entrada = new ObjectInputStream(cliente.getInputStream());
+//            String nombreCliente = (String) entrada.readObject();
+//            System.out.println(nombreCliente);
+//            asignarNombreCliente(nombreCliente);
             System.out.println("Se ha creado el flujo");
 
             /*
             No funciona, automaticmante se cierra la conexion al leer el id
              */
-//            String nombreCliente = entrada.readUTF();
-//            System.out.println(nombreCliente);
-//            asignarNombreCliente(nombreCliente);
             habilitarBotones();
 
         } catch (UnknownHostException e) {
@@ -217,6 +321,7 @@ public class ControladorCliente implements ActionListener {
 
     /**
      * Asigna un ID a cada cliente que se conecte
+     *
      * @param nombre, ID DEL CLIENTE
      */
     private void asignarNombreCliente(String nombre) {
@@ -233,7 +338,7 @@ public class ControladorCliente implements ActionListener {
      * Método privado que habilita varios botones de la interfaz de usuario de la vista del cliente.
      * Este método utiliza la clase SwingUtilities para evitar bloquear la interfaz de usuario principal.
      */
-    private void habilitarBotones(){
+    private void habilitarBotones() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -245,4 +350,5 @@ public class ControladorCliente implements ActionListener {
             }
         });
     }
+
 }

@@ -19,9 +19,12 @@ public class VistaCliente {
     public JLabel lblEstado;
     public JList listaGUI;
     public JTextField txfCliente;
+    public JProgressBar barraProgreso;
+    public JButton btnCancelar;
+    public JButton btnPausar;
     private JPanel pnlPrincipal;
     private JLabel lbl1;
-    public JProgressBar barraProgreso;
+    private JPanel pnl2;
 
     private VistaCliente() {
         JFrame frame = new JFrame("Cliente");
