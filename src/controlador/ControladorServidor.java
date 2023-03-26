@@ -77,9 +77,6 @@ public class ControladorServidor implements ActionListener {
                             cliente = serverSocket.accept();
                             contadorClientes++;
                             nombreCliente =  "Cliente " + contadorClientes;
-//                            salida = new ObjectOutputStream(cliente.getOutputStream());
-//                            salida.writeUTF(nombreCliente);
-//                            salida.flush();
                             SwingUtilities.invokeLater(new Runnable() {
                                 @Override
                                 public void run() {
@@ -87,7 +84,7 @@ public class ControladorServidor implements ActionListener {
                                     System.out.println("Cliente conectado: " + cliente.getInetAddress() + " " + nombreCliente + " conectado\n");
                                 }
                             });
-                            HiloCliente cliente1 = new HiloCliente(cliente,listaDescargas,vistaServidor);
+                            HiloCliente cliente1 = new HiloCliente(cliente,listaDescargas,vistaServidor, nombreCliente);
                             cliente1.start();
                         } catch (IOException e) {
                             System.out.println("ERROR: " + e.getMessage());
@@ -101,6 +98,9 @@ public class ControladorServidor implements ActionListener {
         }
     }
 
+    /**
+     * Deshabilita el boton iniciar
+     */
     private void deshabilitarBoton(){
         SwingUtilities.invokeLater(new Runnable() {
             @Override

@@ -7,8 +7,6 @@ import tasks.WorkerSubida;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -33,7 +31,10 @@ public class ControladorCliente implements ActionListener {
     private WorkerDescarga descarga;
     private WorkerSubida workerEnvio;
 
-
+    /**
+     * Constructor de la clase ControladorCliente
+     * @param vistaCliente
+     */
     public ControladorCliente(VistaCliente vistaCliente) {
         this.vistaCliente = vistaCliente;
         vincularListener(this);
@@ -219,6 +220,7 @@ public class ControladorCliente implements ActionListener {
                 }
                 break;
             }
+
             case "Cancelar": {
                 descarga.cancel(true);
                 int x = JOptionPane.showConfirmDialog(null, "Desea eliminar el archivo", "Aviso", JOptionPane.YES_NO_OPTION);
@@ -227,10 +229,8 @@ public class ControladorCliente implements ActionListener {
                     descarga.eliminarArchivo();
                     descarga.cerrarSocket();
                 }
-
                 break;
             }
-
         }
     }
 
@@ -294,7 +294,8 @@ public class ControladorCliente implements ActionListener {
 
     /**
      * Inicia la conexión con el servidor a través del socket.
-     * Luego habilita los botones una vez establecida la conexion con el socket.
+     * Luego habilita los botones una vez establecida la conexion con el socket y además le asigna un ID a cada
+     * uno de los clientes.
      */
     public void conectar(String ip, int port) {
         try {
@@ -302,14 +303,11 @@ public class ControladorCliente implements ActionListener {
             System.out.println("Cliente iniciado " + cliente.getInetAddress());
             salida = new ObjectOutputStream(cliente.getOutputStream());
             entrada = new ObjectInputStream(cliente.getInputStream());
-//            String nombreCliente = (String) entrada.readObject();
-//            System.out.println(nombreCliente);
-//            asignarNombreCliente(nombreCliente);
+            String nombreCliente = (String) entrada.readUTF();
+            System.out.println(nombreCliente);
             System.out.println("Se ha creado el flujo");
 
-            /*
-            No funciona, automaticmante se cierra la conexion al leer el id
-             */
+            asignarNombreCliente(nombreCliente);
             habilitarBotones();
 
         } catch (UnknownHostException e) {
@@ -321,7 +319,6 @@ public class ControladorCliente implements ActionListener {
 
     /**
      * Asigna un ID a cada cliente que se conecte
-     *
      * @param nombre, ID DEL CLIENTE
      */
     private void asignarNombreCliente(String nombre) {

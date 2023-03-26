@@ -21,12 +21,12 @@ public class HiloCliente extends Thread {
 
     /**
      * Constructor de la clase HiloCliente
-     *
      * @param socketCliente
      * @param listaDescargas
      * @param vista
+     * @param nombreCliente
      */
-    public HiloCliente(Socket socketCliente, List<String> listaDescargas, VistaServidor vista) {
+    public HiloCliente(Socket socketCliente, List<String> listaDescargas, VistaServidor vista, String nombreCliente) {
         this.socketCliente = socketCliente;
         this.listaDescargas = listaDescargas;
         this.nombreCliente = nombreCliente;
@@ -46,7 +46,9 @@ public class HiloCliente extends Thread {
             do {
                 this.salida = new ObjectOutputStream(this.socketCliente.getOutputStream());
                 this.entrada = new ObjectInputStream(this.socketCliente.getInputStream());
-
+//                System.out.println(nombreCliente);
+                salida.writeUTF(nombreCliente);
+                salida.flush();
                 // Maneja las solicitudes del cliente
                 opciones();
                 refrescarDescargas();

@@ -1,6 +1,7 @@
 package tasks;
 
 import gui.VistaCliente;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,12 +24,15 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
         this.fichero = fichero;
 
         estadoSubida = false;
-        if(isCancelled()){
+        if (isCancelled()) {
             firePropertyChange("Eliminar", false, false);
         }
     }
 
-    private void subidaProgreso(){
+    /**
+     * Este método actualiza la interfaz gráfica de usuario para indicar que la subida del fichero está en progreso
+     */
+    private void subidaProgreso() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -38,7 +42,11 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
         });
     }
 
-    private void subidaPausada(){
+
+    /**
+     * Este método actualiza la interfaz gráfica de usuario para indicar que la subida del fichero está en pausa
+     */
+    private void subidaPausada() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -48,15 +56,24 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
         });
     }
 
+    /**
+     * Este método es una implementación de la clase SwingWorker y se utiliza para actualizar la barra de progreso de descarga en la interfaz de usuario.
+     * @param valores intermediate results to process
+     *
+     */
     @Override
     protected void process(List<Integer> valores) {
-        if(!valores.isEmpty()) {
+        if (!valores.isEmpty()) {
             int valor = valores.get(valores.size() - 1);
             vistaServidor.barraProgreso.setValue(valor);
             vistaServidor.barraProgreso.setString(valor + "%");
         }
     }
 
+    /**
+     * Este método se llama cuando la tarea de subida ha finalizado. Actualiza la vista del cliente para reflejar
+     * que la descarga ha terminado y desactiva los botones relevantes.
+     */
     protected void done() {
         vistaServidor.barraProgreso.setValue(100);
         vistaServidor.btnCancelar.setEnabled(false);
@@ -66,6 +83,12 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
 
     }
 
+    /**
+     * Realiza la subida de un fichero en segundo plano a través de la conexión establecida.
+     *
+     * @return
+     * @throws Exception
+     */
     @Override
     protected Void doInBackground() throws Exception {
         System.out.println("-------------CLASE WORKER ENVIO-------------");
@@ -85,17 +108,17 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
         long totalBytesLeidos = 0L;
 
         while ((bytesLeidos = entradaFichero.read(buffer)) > 0) {
-            while(estadoSubida){
-                try{
+            while (estadoSubida) {
+                try {
                     pausar();
-                }catch (InterruptedException e){
-                    throw  new RuntimeException(e);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
             }
             salida.write(buffer, 0, bytesLeidos);
             salida.flush();
             totalBytesLeidos += bytesLeidos;
-            int porcentaje = (int)(totalBytesLeidos *100 / tamanoFichero);
+            int porcentaje = (int) (totalBytesLeidos * 100 / tamanoFichero);
             publish(porcentaje);
         }
         System.out.println("NOMBRE DEL FICHERO: " + fichero.getName() + " -- tamaño del fichero: " + tamanoFichero);
@@ -116,6 +139,7 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
     }
 
     /**
+     * Este método pausa o reanuda la subida actual y actualiza la vista correspondiente.
      *
      * @param pausa
      * @throws InterruptedException
@@ -130,14 +154,15 @@ public class WorkerSubida extends SwingWorker<Void, Integer> {
     }
 
     /**
-     *
+     * Metodo para reanudar las subidas
      */
     private synchronized void reanudar() {
         notify();
     }
 
     /**
-     * Metodo para pausar descargas
+     * Metodo para pausar subidas
+     *
      * @throws InterruptedException
      */
     private synchronized void pausar() throws InterruptedException {

@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ArtifactsWorkspaceSettings">
     <artifacts-to-build>
-      <artifact name="Cliente" />
+      <artifact name="Servidor" />
     </artifacts-to-build>
   </component>
   <component name="AutoImportSettings">
@@ -11,12 +11,10 @@
   <component name="ChangeListManager">
     <list default="true" id="8f8c362d-1a02-4679-b959-2ee8a735e088" name="Changes" comment="Practica Cliente-Servidor">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.docx" beforeDir="false" afterPath="$PROJECT_DIR$/README.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" beforeDir="false" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controlador/ControladorCliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gui/VistaCliente.form" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/VistaCliente.form" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/gui/VistaCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui/VistaCliente.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/WorkerDescarga.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/WorkerSubida.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/WorkerSubida.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/controlador/ControladorServidor.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/controlador/ControladorServidor.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/HiloCliente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/HiloCliente.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,7 +122,7 @@
       <workItem from="1679480385825" duration="24361000" />
       <workItem from="1679700240964" duration="24652000" />
       <workItem from="1679792756926" duration="714000" />
-      <workItem from="1679839005842" duration="11394000" />
+      <workItem from="1679839005842" duration="12449000" />
     </task>
     <task id="LOCAL-00001" summary="PruebaGIT">
       <created>1678884371052</created>
@@ -252,7 +250,14 @@
       <option name="project" value="LOCAL" />
       <updated>1679763767854</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Practica Cliente-Servidor">
+      <created>1679866446624</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1679866446624</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

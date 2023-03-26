@@ -37,6 +37,9 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
         }
     }
 
+    /**
+     * Este método actualiza la interfaz gráfica de usuario para indicar que la descarga está en progreso
+     */
     private void descargaProgreso() {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -47,6 +50,9 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
         });
     }
 
+    /**
+     * Este método actualiza la interfaz gráfica de usuario para indicar que la descarga está en pausa
+     */
     private void descargaPausada(){
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -57,6 +63,11 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
         });
     }
 
+    /**
+     * Este método es una implementación de la clase SwingWorker y se utiliza para actualizar la barra de progreso de descarga en la interfaz de usuario.
+     * @param valores intermediate results to process
+     *
+     */
     @Override
     protected void process(List<Integer> valores) {
         if (!valores.isEmpty()) {
@@ -66,6 +77,10 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
         }
     }
 
+    /**
+     *Este método se llama cuando la tarea de descarga ha finalizado. Actualiza la vista del cliente para reflejar
+     * que la descarga ha terminado y desactiva los botones relevantes.
+     */
     @Override
     protected void done() {
         vistaCliente.barraProgreso.setValue(100);
@@ -76,6 +91,11 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
 
     }
 
+    /**
+     * Realiza la descarga en segundo plano a través de la conexión establecida.
+     * @return
+     * @throws Exception
+     */
     @Override
     protected Void doInBackground() throws Exception {
         try {
@@ -134,6 +154,9 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
         return null;
     }
 
+    /**
+     * Elimina el archivo con el nombre especificado. Si el archivo existe, lo borra y muestra un mensaje de confirmación.
+     */
     public void eliminarArchivo() {
         File archivo = new File(nombreArchivo);
         if (archivo.exists()) {
@@ -143,6 +166,11 @@ public class WorkerDescarga extends SwingWorker<Void, Integer> {
         }
     }
 
+    /**
+     * Este método pausa o reanuda la descarga actual y actualiza la vista correspondiente.
+     * @param pausa
+     * @throws InterruptedException
+     */
     public void pausarDescarga(boolean pausa) throws InterruptedException {
         estadoDescarga = pausa;
         descargaPausada();
